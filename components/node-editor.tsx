@@ -12,32 +12,7 @@ export const NodeEditor = ({
 	onNodeChange,
 }: { node: Node | undefined; onNodeChange: (node: Node) => void }) => {
 	if (!node) {
-		return (
-			<>
-				<IconButton
-					color="primary"
-					onClick={() =>
-						onNodeChange({
-							type: "questionAnswerExercise",
-						})
-					}
-				>
-					<QuestionMark />
-				</IconButton>
-
-				<IconButton
-					color="primary"
-					onClick={() =>
-						onNodeChange({
-							type: "markdown",
-							text: "",
-						})
-					}
-				>
-					<Article />
-				</IconButton>
-			</>
-		);
+		return <NodeSelection onNodeSelected={onNodeChange} />;
 	}
 	switch (node.type) {
 		case "questionAnswerExercise":
@@ -64,15 +39,52 @@ const QuestionAnswerExerciseNodeEditor = ({
 	return (
 		<Box sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 			<Typography>Question</Typography>
-			<NodeEditor
-				node={node.question}
-				onNodeChange={(question) => onNodeChange({ ...node, question })}
+			{node.questionNodes.map((questionNode) => (
+				<NodeEditor
+					key={questionNode.id}
+					node={questionNode}
+					onNodeChange={(newNode) =>
+						onNodeChange({
+							...node,
+							questionNodes: node.questionNodes.map((existingNode) =>
+								existingNode.id === newNode.id ? newNode : existingNode,
+							),
+						})
+					}
+				/>
+			))}
+			<NodeSelection
+				onNodeSelected={(selectedNode) =>
+					onNodeChange({
+						...node,
+						questionNodes: [...node.questionNodes, selectedNode],
+					})
+				}
 			/>
+
 			<Divider />
 			<Typography>Answer</Typography>
-			<NodeEditor
-				node={node.answer}
-				onNodeChange={(answer) => onNodeChange({ ...node, answer })}
+			{node.answerNodes.map((answerNode) => (
+				<NodeEditor
+					key={answerNode.id}
+					node={answerNode}
+					onNodeChange={(newNode) =>
+						onNodeChange({
+							...node,
+							answerNodes: node.answerNodes.map((existingNode) =>
+								existingNode.id === newNode.id ? newNode : existingNode,
+							),
+						})
+					}
+				/>
+			))}
+			<NodeSelection
+				onNodeSelected={(selectedNode) =>
+					onNodeChange({
+						...node,
+						answerNodes: [...node.answerNodes, selectedNode],
+					})
+				}
 			/>
 		</Box>
 	);
@@ -95,5 +107,40 @@ const MarkdownNodeEditor = ({
 			variant="outlined"
 			onChange={(event) => onNodeChange({ ...node, text: event.target.value })}
 		/>
+	);
+};
+
+const NodeSelection = ({
+	onNodeSelected,
+}: { onNodeSelected: (node: Node) => void }) => {
+	return (
+		<Box>
+			<IconButton
+				color="primary"
+				onClick={() =>
+					onNodeSelected({
+						id: crypto.randomUUID(),
+						type: "questionAnswerExercise",
+						questionNodes: [],
+						answerNodes: [],
+					})
+				}
+			>
+				<QuestionMark />
+			</IconButton>
+
+			<IconButton
+				color="primary"
+				onClick={() =>
+					onNodeSelected({
+						id: crypto.randomUUID(),
+						type: "markdown",
+						text: "",
+					})
+				}
+			>
+				<Article />
+			</IconButton>
+		</Box>
 	);
 };
