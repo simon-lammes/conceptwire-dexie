@@ -1,6 +1,7 @@
 import type {
 	MarkdownNode,
 	Node,
+	NodeType,
 	QuestionAnswerExerciseNode,
 } from "@/types/node";
 import { Article, QuestionMark } from "@mui/icons-material";
@@ -10,10 +11,10 @@ import Typography from "@mui/material/Typography";
 export const NodeEditor = ({
 	node,
 	onNodeChange,
-}: { node: Node | undefined; onNodeChange: (node: Node) => void }) => {
-	if (!node) {
-		return <NodeSelection onNodeSelected={onNodeChange} />;
-	}
+}: {
+	node: Node;
+	onNodeChange: (node: Node) => void;
+}) => {
 	switch (node.type) {
 		case "questionAnswerExercise":
 			return (
@@ -54,6 +55,7 @@ const QuestionAnswerExerciseNodeEditor = ({
 				/>
 			))}
 			<NodeSelection
+				nodeTypes={contentNodeTypes}
 				onNodeSelected={(selectedNode) =>
 					onNodeChange({
 						...node,
@@ -79,6 +81,7 @@ const QuestionAnswerExerciseNodeEditor = ({
 				/>
 			))}
 			<NodeSelection
+				nodeTypes={contentNodeTypes}
 				onNodeSelected={(selectedNode) =>
 					onNodeChange({
 						...node,
@@ -110,37 +113,46 @@ const MarkdownNodeEditor = ({
 	);
 };
 
-const NodeSelection = ({
+export const NodeSelection = ({
 	onNodeSelected,
-}: { onNodeSelected: (node: Node) => void }) => {
+	nodeTypes,
+}: { onNodeSelected: (node: Node) => void; nodeTypes: NodeType[] }) => {
 	return (
 		<Box>
-			<IconButton
-				color="primary"
-				onClick={() =>
-					onNodeSelected({
-						id: crypto.randomUUID(),
-						type: "questionAnswerExercise",
-						questionNodes: [],
-						answerNodes: [],
-					})
-				}
-			>
-				<QuestionMark />
-			</IconButton>
+			{nodeTypes.includes("questionAnswerExercise") && (
+				<IconButton
+					color="primary"
+					onClick={() =>
+						onNodeSelected({
+							id: crypto.randomUUID(),
+							type: "questionAnswerExercise",
+							questionNodes: [],
+							answerNodes: [],
+						})
+					}
+				>
+					<QuestionMark />
+				</IconButton>
+			)}
 
-			<IconButton
-				color="primary"
-				onClick={() =>
-					onNodeSelected({
-						id: crypto.randomUUID(),
-						type: "markdown",
-						text: "",
-					})
-				}
-			>
-				<Article />
-			</IconButton>
+			{nodeTypes.includes("markdown") && (
+				<IconButton
+					color="primary"
+					onClick={() =>
+						onNodeSelected({
+							id: crypto.randomUUID(),
+							type: "markdown",
+							text: "",
+						})
+					}
+				>
+					<Article />
+				</IconButton>
+			)}
 		</Box>
 	);
 };
+
+export const exerciseNodeTypes: NodeType[] = ["questionAnswerExercise"];
+
+const contentNodeTypes: NodeType[] = ["markdown"];

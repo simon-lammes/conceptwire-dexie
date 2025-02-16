@@ -1,5 +1,7 @@
 export type Node = QuestionAnswerExerciseNode | MarkdownNode;
 
+export type NodeType = Node["type"];
+
 export type QuestionAnswerExerciseNode = {
 	id: string;
 	type: "questionAnswerExercise";

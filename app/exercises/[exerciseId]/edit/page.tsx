@@ -1,6 +1,10 @@
 "use client";
 
-import { NodeEditor } from "@/components/node-editor";
+import {
+	NodeEditor,
+	NodeSelection,
+	exerciseNodeTypes,
+} from "@/components/node-editor";
 import type { Node } from "@/types/node";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Card } from "@mui/material";
@@ -31,7 +35,14 @@ export default function ExerciseEditorPage() {
 				</Toolbar>
 			</AppBar>
 			<Card variant="outlined" sx={{ maxWidth: 360 }}>
-				<NodeEditor node={exercise} onNodeChange={setExercise} />
+				{exercise ? (
+					<NodeEditor node={exercise} onNodeChange={setExercise} />
+				) : (
+					<NodeSelection
+						onNodeSelected={setExercise}
+						nodeTypes={exerciseNodeTypes}
+					/>
+				)}
 			</Card>
 		</>
 	);
