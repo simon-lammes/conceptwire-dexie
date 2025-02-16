@@ -1,11 +1,17 @@
+"use client";
+
+import { NodeEditor } from "@/components/node-editor";
+import type { Node } from "@/types/node";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Card } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { useState } from "react";
 
 export default function ExerciseEditorPage() {
+	const [exercise, setExercise] = useState<Node | undefined>(undefined);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -24,9 +30,9 @@ export default function ExerciseEditorPage() {
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Box>
-				<Typography>xxx</Typography>
-			</Box>
+			<Card variant="outlined" sx={{ maxWidth: 360 }}>
+				<NodeEditor node={exercise} onNodeChange={setExercise} />
+			</Card>
 		</>
 	);
 }
