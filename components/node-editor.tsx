@@ -11,9 +11,11 @@ import Typography from "@mui/material/Typography";
 export const NodeEditor = ({
 	node,
 	onNodeChange,
+	onNodeRemoved,
 }: {
 	node: Node;
 	onNodeChange: (node: Node) => void;
+	onNodeRemoved: () => void;
 }) => {
 	switch (node.type) {
 		case "questionAnswerExercise":
@@ -24,7 +26,13 @@ export const NodeEditor = ({
 				/>
 			);
 		case "markdown":
-			return <MarkdownNodeEditor node={node} onNodeChange={onNodeChange} />;
+			return (
+				<MarkdownNodeEditor
+					node={node}
+					onNodeChange={onNodeChange}
+					onNodeRemoved={onNodeRemoved}
+				/>
+			);
 		default:
 			return <Typography>unknown type</Typography>;
 	}
@@ -52,6 +60,14 @@ const QuestionAnswerExerciseNodeEditor = ({
 							),
 						})
 					}
+					onNodeRemoved={() => {
+						onNodeChange({
+							...node,
+							questionNodes: node.questionNodes.filter(
+								(x) => x.id !== questionNode.id,
+							),
+						});
+					}}
 				/>
 			))}
 			<NodeSelection
@@ -78,6 +94,14 @@ const QuestionAnswerExerciseNodeEditor = ({
 							),
 						})
 					}
+					onNodeRemoved={() =>
+						onNodeChange({
+							...node,
+							answerNodes: node.answerNodes.filter(
+								(x) => x.id !== answerNode.id,
+							),
+						})
+					}
 				/>
 			))}
 			<NodeSelection
@@ -92,13 +116,14 @@ const QuestionAnswerExerciseNodeEditor = ({
 		</Box>
 	);
 };
-
 const MarkdownNodeEditor = ({
 	node,
 	onNodeChange,
+	onNodeRemoved,
 }: {
 	node: MarkdownNode;
 	onNodeChange: (node: Node) => void;
+	onNodeRemoved: () => void;
 }) => {
 	return (
 		<TextField
@@ -108,7 +133,14 @@ const MarkdownNodeEditor = ({
 			rows={4}
 			value={node.text}
 			variant="outlined"
-			onChange={(event) => onNodeChange({ ...node, text: event.target.value })}
+			onChange={(event) => {
+				onNodeChange({ ...node, text: event.target.value });
+			}}
+			onKeyDown={(e) => {
+				if (e.key === "Backspace" && !node.text) {
+					onNodeRemoved();
+				}
+			}}
 		/>
 	);
 };
