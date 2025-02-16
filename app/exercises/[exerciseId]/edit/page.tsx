@@ -8,7 +8,7 @@ import {
 import { NodeView } from "@/components/node-view";
 import type { Node } from "@/types/node";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Card } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
@@ -39,27 +39,37 @@ export default function ExerciseEditorPage() {
 			<Grid container spacing={2} padding={2}>
 				<Grid size={6}>
 					<Card variant="outlined">
-						{exercise ? (
-							<NodeEditor
-								node={exercise}
-								onNodeChange={setExercise}
-								onNodeRemoved={() => setExercise(undefined)}
-							/>
-						) : (
-							<NodeSelection
-								onNodeSelected={setExercise}
-								nodeTypes={exerciseNodeTypes}
-							/>
-						)}
+						<CardContent>
+							<Typography gutterBottom variant="h4">
+								Source
+							</Typography>
+							{exercise ? (
+								<NodeEditor
+									node={exercise}
+									onNodeChange={setExercise}
+									onNodeRemoved={() => setExercise(undefined)}
+								/>
+							) : (
+								<NodeSelection
+									onNodeSelected={setExercise}
+									nodeTypes={exerciseNodeTypes}
+								/>
+							)}
+						</CardContent>
 					</Card>
 				</Grid>
 				<Grid size={6}>
 					<Card variant="outlined">
-						{exercise ? (
-							<NodeView node={exercise} />
-						) : (
-							<Typography>no preview available</Typography>
-						)}
+						<CardContent>
+							<Typography gutterBottom variant="h4">
+								Preview
+							</Typography>
+							{exercise ? (
+								<NodeView node={exercise} />
+							) : (
+								<Typography>no preview available</Typography>
+							)}
+						</CardContent>
 					</Card>
 				</Grid>
 			</Grid>
