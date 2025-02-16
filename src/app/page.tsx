@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import CardList from '@/app/components/CardList'
-import { useSearch } from './(pages)/SearchContext'
+import CardList from "@/app/components/CardList";
+import { useSearch } from "./(pages)/SearchContext";
 
 export default function Everything() {
-  const { searchKeyword } = useSearch()
+	const { searchKeyword } = useSearch();
 
-  return <CardList searchKeyword={searchKeyword} />
+	return <CardList searchKeyword={searchKeyword} />;
 }
