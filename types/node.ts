@@ -8,4 +8,5 @@ export type QuestionAnswerExerciseNode = {
 
 export type MarkdownNode = {
 	type: "markdown";
+	text: string;
 };

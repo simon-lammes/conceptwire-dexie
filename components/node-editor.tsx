@@ -1,6 +1,10 @@
-import type { Node, QuestionAnswerExerciseNode } from "@/types/node";
-import { QuestionMark } from "@mui/icons-material";
-import { Box, Divider, IconButton } from "@mui/material";
+import type {
+	MarkdownNode,
+	Node,
+	QuestionAnswerExerciseNode,
+} from "@/types/node";
+import { Article, QuestionMark } from "@mui/icons-material";
+import { Box, Divider, IconButton, TextField } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 export const NodeEditor = ({
@@ -9,16 +13,30 @@ export const NodeEditor = ({
 }: { node: Node | undefined; onNodeChange: (node: Node) => void }) => {
 	if (!node) {
 		return (
-			<IconButton
-				color="primary"
-				onClick={() =>
-					onNodeChange({
-						type: "questionAnswerExercise",
-					})
-				}
-			>
-				<QuestionMark />
-			</IconButton>
+			<>
+				<IconButton
+					color="primary"
+					onClick={() =>
+						onNodeChange({
+							type: "questionAnswerExercise",
+						})
+					}
+				>
+					<QuestionMark />
+				</IconButton>
+
+				<IconButton
+					color="primary"
+					onClick={() =>
+						onNodeChange({
+							type: "markdown",
+							text: "",
+						})
+					}
+				>
+					<Article />
+				</IconButton>
+			</>
 		);
 	}
 	switch (node.type) {
@@ -29,6 +47,8 @@ export const NodeEditor = ({
 					onNodeChange={onNodeChange}
 				/>
 			);
+		case "markdown":
+			return <MarkdownNodeEditor node={node} onNodeChange={onNodeChange} />;
 		default:
 			return <Typography>unknown type</Typography>;
 	}
@@ -42,7 +62,7 @@ const QuestionAnswerExerciseNodeEditor = ({
 	onNodeChange: (node: Node) => void;
 }) => {
 	return (
-		<Box>
+		<Box sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 			<Typography>Question</Typography>
 			<NodeEditor
 				node={node.question}
@@ -55,5 +75,25 @@ const QuestionAnswerExerciseNodeEditor = ({
 				onNodeChange={(answer) => onNodeChange({ ...node, answer })}
 			/>
 		</Box>
+	);
+};
+
+const MarkdownNodeEditor = ({
+	node,
+	onNodeChange,
+}: {
+	node: MarkdownNode;
+	onNodeChange: (node: Node) => void;
+}) => {
+	return (
+		<TextField
+			fullWidth
+			label="Markdown"
+			multiline
+			rows={4}
+			value={node.text}
+			variant="outlined"
+			onChange={(event) => onNodeChange({ ...node, text: event.target.value })}
+		/>
 	);
 };
