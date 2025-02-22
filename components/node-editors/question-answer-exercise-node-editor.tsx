@@ -1,4 +1,5 @@
-import { NodeEditor, NodeSelection } from "@/components/node-editor";
+import { NodeEditor } from "@/components/node-editor";
+import { NodeSelection } from "@/components/node-selection";
 import {
 	type Node,
 	type QuestionAnswerExerciseNode,
