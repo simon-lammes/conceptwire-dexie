@@ -1,4 +1,4 @@
-export type Node = QuestionAnswerExerciseNode | MarkdownNode;
+export type Node = QuestionAnswerExerciseNode | MarkdownNode | ImageNode;
 
 export type NodeType = Node["type"];
 
@@ -15,10 +15,16 @@ export type MarkdownNode = {
 	text: string;
 };
 
+export type ImageNode = {
+	id: string;
+	type: "image";
+};
+
 export const exerciseNodeTypes: readonly NodeType[] = Object.freeze([
 	"questionAnswerExercise",
 ]);
 
 export const contentNodeTypes: readonly NodeType[] = Object.freeze([
 	"markdown",
+	"image",
 ]);

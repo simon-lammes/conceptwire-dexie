@@ -1,6 +1,7 @@
+import { ImageNodeEditor } from "@/components/node-editors/image-node-editor";
 import { QuestionAnswerExerciseNodeEditor } from "@/components/node-editors/question-answer-exercise-node-editor";
 import type { Node, NodeType } from "@/models/node";
-import { Article, QuestionMark } from "@mui/icons-material";
+import { Article, Image, QuestionMark } from "@mui/icons-material";
 import { Box, IconButton } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { MarkdownNodeEditor } from "./node-editors/markdown-node-editor";
@@ -25,6 +26,14 @@ export const NodeEditor = ({
 		case "markdown":
 			return (
 				<MarkdownNodeEditor
+					node={node}
+					onNodeChange={onNodeChange}
+					onNodeRemoved={onNodeRemoved}
+				/>
+			);
+		case "image":
+			return (
+				<ImageNodeEditor
 					node={node}
 					onNodeChange={onNodeChange}
 					onNodeRemoved={onNodeRemoved}
@@ -72,6 +81,20 @@ export const NodeSelection = ({
 					}
 				>
 					<Article />
+				</IconButton>
+			)}
+
+			{nodeTypes.includes("image") && (
+				<IconButton
+					color="primary"
+					onClick={() =>
+						onNodeSelected({
+							id: crypto.randomUUID(),
+							type: "image",
+						})
+					}
+				>
+					<Image />
 				</IconButton>
 			)}
 		</Box>
