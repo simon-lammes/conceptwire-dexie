@@ -17,7 +17,6 @@ export const ImageNodeEditor = ({
 		isDragActive,
 		isDragAccept,
 		isDragReject,
-		acceptedFiles,
 	} = useDropzone({
 		accept: {
 			"image/*": [".jpeg", ".png", ".webp", ".avif"],
@@ -27,8 +26,6 @@ export const ImageNodeEditor = ({
 			onNodeChange({ ...node, blob: file });
 		},
 	});
-
-	console.log(acceptedFiles);
 
 	return (
 		<Card variant="outlined" {...getRootProps({ className: "dropzone" })}>
