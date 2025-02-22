@@ -1,6 +1,16 @@
 import type { MarkdownNode } from "@/models/node";
-import Box from "@mui/material/Box";
+import Markdown from "react-markdown";
 
 export const MarkdownView = ({ node }: { node: MarkdownNode }) => {
-	return <Box>{node.text}</Box>;
+	return (
+		<Markdown
+			components={{
+				ul: (props) => (
+					<ul {...props} style={{ listStylePosition: "inside" }} />
+				),
+			}}
+		>
+			{node.text}
+		</Markdown>
+	);
 };
