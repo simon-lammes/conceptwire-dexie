@@ -1,5 +1,5 @@
-import type { ImageNode, Node } from "@/models/node";
-import { Card, CardContent } from "@mui/material";
+import type { ImageNode } from "@/models/node";
+import { Card, CardContent, CardMedia } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 
 export const ImageNodeEditor = ({
@@ -8,7 +8,7 @@ export const ImageNodeEditor = ({
 	onNodeRemoved,
 }: {
 	node: ImageNode;
-	onNodeChange: (node: Node) => void;
+	onNodeChange: (node: ImageNode) => void;
 	onNodeRemoved: () => void;
 }) => {
 	const {
@@ -22,12 +22,24 @@ export const ImageNodeEditor = ({
 		accept: {
 			"image/*": [".jpeg", ".png", ".webp", ".avif"],
 		},
+		onDrop: (acceptedFiles: File[]) => {
+			const file = acceptedFiles[0];
+			onNodeChange({ ...node, blob: file });
+		},
 	});
 
 	console.log(acceptedFiles);
 
 	return (
 		<Card variant="outlined" {...getRootProps({ className: "dropzone" })}>
+			{node.blob && (
+				<CardMedia
+					component="img"
+					height="194"
+					image={URL.createObjectURL(node.blob)}
+					alt="Paella dish"
+				/>
+			)}
 			<CardContent>
 				<input {...getInputProps()} />
 				{isDragAccept && <p>All files will be accepted</p>}

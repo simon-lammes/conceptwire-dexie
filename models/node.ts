@@ -18,6 +18,7 @@ export type MarkdownNode = {
 export type ImageNode = {
 	id: string;
 	type: "image";
+	blob?: Blob;
 };
 
 export const exerciseNodeTypes: readonly NodeType[] = Object.freeze([
