@@ -14,3 +14,11 @@ export type MarkdownNode = {
 	type: "markdown";
 	text: string;
 };
+
+export const exerciseNodeTypes: readonly NodeType[] = Object.freeze([
+	"questionAnswerExercise",
+]);
+
+export const contentNodeTypes: readonly NodeType[] = Object.freeze([
+	"markdown",
+]);

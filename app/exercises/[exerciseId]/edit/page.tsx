@@ -1,12 +1,8 @@
 "use client";
 
-import {
-	NodeEditor,
-	NodeSelection,
-	exerciseNodeTypes,
-} from "@/components/node-editor";
+import { NodeEditor, NodeSelection } from "@/components/node-editor";
 import { NodeView } from "@/components/node-view";
-import type { Node } from "@/types/node";
+import { type Node, exerciseNodeTypes } from "@/models/node";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Card, CardContent } from "@mui/material";
 import AppBar from "@mui/material/AppBar";

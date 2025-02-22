@@ -1,10 +1,6 @@
-import type {
-	MarkdownNode,
-	Node,
-	QuestionAnswerExerciseNode,
-} from "@/types/node";
-import { Divider } from "@mui/material";
-import Box from "@mui/material/Box";
+import { MarkdownView } from "@/components/node-views/markdown-view";
+import { QuestionAnswerExerciseNodeView } from "@/components/node-views/question-answer-exercise-node-view";
+import type { Node } from "@/models/node";
 
 export const NodeView = ({ node }: { node: Node }) => {
 	switch (node.type) {
@@ -15,24 +11,4 @@ export const NodeView = ({ node }: { node: Node }) => {
 		default:
 			return "unknown node type";
 	}
-};
-
-const QuestionAnswerExerciseNodeView = ({
-	node,
-}: { node: QuestionAnswerExerciseNode }) => {
-	return (
-		<Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-			{node.questionNodes.map((question) => (
-				<NodeView key={question.id} node={question} />
-			))}
-			<Divider />
-			{node.answerNodes.map((answer) => (
-				<NodeView key={answer.id} node={answer} />
-			))}
-		</Box>
-	);
-};
-
-const MarkdownView = ({ node }: { node: MarkdownNode }) => {
-	return <Box>{node.text}</Box>;
 };

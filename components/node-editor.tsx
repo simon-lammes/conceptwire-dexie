@@ -1,12 +1,9 @@
-import type {
-	MarkdownNode,
-	Node,
-	NodeType,
-	QuestionAnswerExerciseNode,
-} from "@/types/node";
+import { QuestionAnswerExerciseNodeEditor } from "@/components/node-editors/question-answer-exercise-node-editor";
+import type { Node, NodeType } from "@/models/node";
 import { Article, QuestionMark } from "@mui/icons-material";
-import { Box, Divider, IconButton, TextField } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { MarkdownNodeEditor } from "./node-editors/markdown-node-editor";
 
 export const NodeEditor = ({
 	node,
@@ -38,117 +35,13 @@ export const NodeEditor = ({
 	}
 };
 
-const QuestionAnswerExerciseNodeEditor = ({
-	node,
-	onNodeChange,
-}: {
-	node: QuestionAnswerExerciseNode;
-	onNodeChange: (node: Node) => void;
-}) => {
-	return (
-		<Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-			<Typography>Question</Typography>
-			{node.questionNodes.map((questionNode) => (
-				<NodeEditor
-					key={questionNode.id}
-					node={questionNode}
-					onNodeChange={(newNode) =>
-						onNodeChange({
-							...node,
-							questionNodes: node.questionNodes.map((existingNode) =>
-								existingNode.id === newNode.id ? newNode : existingNode,
-							),
-						})
-					}
-					onNodeRemoved={() => {
-						onNodeChange({
-							...node,
-							questionNodes: node.questionNodes.filter(
-								(x) => x.id !== questionNode.id,
-							),
-						});
-					}}
-				/>
-			))}
-			<NodeSelection
-				nodeTypes={contentNodeTypes}
-				onNodeSelected={(selectedNode) =>
-					onNodeChange({
-						...node,
-						questionNodes: [...node.questionNodes, selectedNode],
-					})
-				}
-			/>
-
-			<Divider />
-			<Typography>Answer</Typography>
-			{node.answerNodes.map((answerNode) => (
-				<NodeEditor
-					key={answerNode.id}
-					node={answerNode}
-					onNodeChange={(newNode) =>
-						onNodeChange({
-							...node,
-							answerNodes: node.answerNodes.map((existingNode) =>
-								existingNode.id === newNode.id ? newNode : existingNode,
-							),
-						})
-					}
-					onNodeRemoved={() =>
-						onNodeChange({
-							...node,
-							answerNodes: node.answerNodes.filter(
-								(x) => x.id !== answerNode.id,
-							),
-						})
-					}
-				/>
-			))}
-			<NodeSelection
-				nodeTypes={contentNodeTypes}
-				onNodeSelected={(selectedNode) =>
-					onNodeChange({
-						...node,
-						answerNodes: [...node.answerNodes, selectedNode],
-					})
-				}
-			/>
-		</Box>
-	);
-};
-const MarkdownNodeEditor = ({
-	node,
-	onNodeChange,
-	onNodeRemoved,
-}: {
-	node: MarkdownNode;
-	onNodeChange: (node: Node) => void;
-	onNodeRemoved: () => void;
-}) => {
-	return (
-		<TextField
-			fullWidth
-			label="Markdown"
-			multiline
-			rows={4}
-			value={node.text}
-			variant="outlined"
-			onChange={(event) => {
-				onNodeChange({ ...node, text: event.target.value });
-			}}
-			onKeyDown={(e) => {
-				if (e.key === "Backspace" && !node.text) {
-					onNodeRemoved();
-				}
-			}}
-		/>
-	);
-};
-
 export const NodeSelection = ({
 	onNodeSelected,
 	nodeTypes,
-}: { onNodeSelected: (node: Node) => void; nodeTypes: NodeType[] }) => {
+}: {
+	onNodeSelected: (node: Node) => void;
+	nodeTypes: readonly NodeType[];
+}) => {
 	return (
 		<Box>
 			{nodeTypes.includes("questionAnswerExercise") && (
@@ -184,7 +77,3 @@ export const NodeSelection = ({
 		</Box>
 	);
 };
-
-export const exerciseNodeTypes: NodeType[] = ["questionAnswerExercise"];
-
-const contentNodeTypes: NodeType[] = ["markdown"];
