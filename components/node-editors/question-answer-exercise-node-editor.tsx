@@ -16,7 +16,13 @@ export const QuestionAnswerExerciseNodeEditor = ({
 	onNodeChange: (node: Node) => void;
 }) => {
 	return (
-		<Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				gap: 2,
+			}}
+		>
 			<Typography>Question</Typography>
 			{node.questionNodes.map((questionNode) => (
 				<NodeEditor

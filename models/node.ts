@@ -19,6 +19,8 @@ export type ImageNode = {
 	id: string;
 	type: "image";
 	blob?: Blob;
+	width?: number;
+	height?: number;
 };
 
 export const exerciseNodeTypes: readonly NodeType[] = Object.freeze([

@@ -1,6 +1,8 @@
 import type { ImageNode } from "@/models/node";
 import { MoreVert } from "@mui/icons-material";
 import {
+	Box,
+	Button,
 	Card,
 	CardContent,
 	CardHeader,
@@ -8,6 +10,7 @@ import {
 	ListItemButton,
 	ListItemText,
 	Popover,
+	TextField,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import type React from "react";
@@ -56,9 +59,35 @@ export const ImageNodeEditor = ({
 			)}
 			<CardContent>
 				<input {...getInputProps()} />
-				{isDragAccept && <p>All files will be accepted</p>}
-				{isDragReject && <p>Some files will be rejected</p>}
-				{!isDragActive && <p>Drop some files here ...</p>}
+				<Button variant="text">
+					{isDragAccept && <span>All files will be accepted</span>}
+					{isDragReject && <span>Some files will be rejected</span>}
+					{!isDragActive && <span>Drop some files here ...</span>}
+				</Button>
+				<Box
+					sx={{ pt: 2, display: "flex", gap: 2 }}
+					onClick={(event) => event.stopPropagation()}
+				>
+					<TextField
+						type="number"
+						label="Width"
+						value={node.width ?? ""}
+						onChange={(event) =>
+							onNodeChange({ ...node, width: +event.target.value || undefined })
+						}
+					/>
+					<TextField
+						type="number"
+						label="Height"
+						value={node.height ?? ""}
+						onChange={(event) =>
+							onNodeChange({
+								...node,
+								height: +event.target.value || undefined,
+							})
+						}
+					/>
+				</Box>
 			</CardContent>
 		</Card>
 	);
