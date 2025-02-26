@@ -7,15 +7,23 @@ import { useExercise } from "@/hooks/use-exercise";
 import type { Exercise } from "@/models/exercise";
 import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";
-import { ArrowBack } from "@mui/icons-material";
-import { Card, CardContent } from "@mui/material";
+import { ArrowBack, MoreVert } from "@mui/icons-material";
+import {
+	Card,
+	CardContent,
+	ListItemButton,
+	ListItemText,
+	Popover,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
-import { use, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { use, useCallback, useId, useMemo, useState } from "react";
 
 export default function ExerciseEditorPage({
 	params,
@@ -23,6 +31,7 @@ export default function ExerciseEditorPage({
 	params: Promise<{ exerciseId: string }>;
 }) {
 	const { exerciseId } = use(params);
+	const router = useRouter();
 	const dbExercise = useExercise(exerciseId);
 	const exercise = useMemo(
 		() => ({ id: exerciseId, ...dbExercise }),
@@ -51,6 +60,12 @@ export default function ExerciseEditorPage({
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Exercise Editor
 					</Typography>
+					<MoreButton
+						onRemove={async () => {
+							await db.exercises.delete(exerciseId);
+							router.push("/exercises");
+						}}
+					/>
 				</Toolbar>
 			</AppBar>
 			<Grid container spacing={2} padding={2}>
@@ -97,5 +112,48 @@ export default function ExerciseEditorPage({
 				</Grid>
 			</Grid>
 		</>
+	);
+}
+
+function MoreButton({ onRemove }: { onRemove: () => void }) {
+	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+	const open = Boolean(anchorEl);
+	const popoverId = useId();
+
+	return (
+		<div>
+			<IconButton
+				aria-describedby={open ? popoverId : undefined}
+				onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+					event.stopPropagation();
+					setAnchorEl(event.currentTarget);
+				}}
+			>
+				<MoreVert />
+			</IconButton>
+			<Popover
+				id={popoverId}
+				open={open}
+				anchorEl={anchorEl}
+				onClose={() => {
+					setAnchorEl(null);
+				}}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: "left",
+				}}
+			>
+				<ListItemButton component="button">
+					<ListItemText
+						onClick={(event) => {
+							event.stopPropagation();
+							onRemove();
+						}}
+						primary="Remove"
+					/>
+				</ListItemButton>
+			</Popover>
+		</div>
 	);
 }
