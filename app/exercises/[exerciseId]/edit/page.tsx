@@ -7,13 +7,14 @@ import { useExercise } from "@/hooks/use-exercise";
 import type { Exercise } from "@/models/exercise";
 import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";
-import MenuIcon from "@mui/icons-material/Menu";
+import { ArrowBack } from "@mui/icons-material";
 import { Card, CardContent } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import Link from "next/link";
 import { use, useCallback, useMemo } from "react";
 
 export default function ExerciseEditorPage({
@@ -40,10 +41,12 @@ export default function ExerciseEditorPage({
 						size="large"
 						edge="start"
 						color="inherit"
-						aria-label="menu"
+						aria-label="back"
 						sx={{ mr: 2 }}
+						component={Link}
+						href="/exercises"
 					>
-						<MenuIcon />
+						<ArrowBack />
 					</IconButton>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Exercise Editor
