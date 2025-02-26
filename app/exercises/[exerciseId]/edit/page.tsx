@@ -4,7 +4,9 @@ import { NodeEditor } from "@/components/node-editor";
 import { NodeSelection } from "@/components/node-selection";
 import { NodeView } from "@/components/node-view";
 import { useExercise } from "@/hooks/use-exercise";
-import { type Node, exerciseNodeTypes } from "@/models/node";
+import type { Exercise } from "@/models/exercise";
+import { exerciseNodeTypes } from "@/models/node";
+import { db } from "@/utils/db";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Card, CardContent } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
@@ -12,12 +14,24 @@ import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { use, useCallback, useMemo } from "react";
 
-export default function ExerciseEditorPage() {
-	const [exercise, setExercise] = useState<Node | undefined>(undefined);
-	const exerciseDb = useExercise("hello");
-	console.log("todo (remove)", exercise);
+export default function ExerciseEditorPage({
+	params,
+}: {
+	params: Promise<{ exerciseId: string }>;
+}) {
+	const { exerciseId } = use(params);
+	const dbExercise = useExercise(exerciseId);
+	const exercise = useMemo(
+		() => ({ id: exerciseId, ...dbExercise }),
+		[exerciseId, dbExercise],
+	);
+	const setExercise = useCallback(
+		(exercise: Exercise) => db.exercises.put(exercise),
+		[],
+	);
+
 	return (
 		<>
 			<AppBar position="sticky">
@@ -43,15 +57,21 @@ export default function ExerciseEditorPage() {
 							<Typography gutterBottom variant="h4">
 								Source
 							</Typography>
-							{exercise ? (
+							{exercise?.root ? (
 								<NodeEditor
-									node={exercise}
-									onNodeChange={setExercise}
-									onNodeRemoved={() => setExercise(undefined)}
+									node={exercise.root}
+									onNodeChange={(node) =>
+										setExercise({ ...exercise, root: node })
+									}
+									onNodeRemoved={() =>
+										setExercise({ ...exercise, root: undefined })
+									}
 								/>
 							) : (
 								<NodeSelection
-									onNodeSelected={setExercise}
+									onNodeSelected={(node) =>
+										setExercise({ ...exercise, root: node })
+									}
 									nodeTypes={exerciseNodeTypes}
 								/>
 							)}
@@ -64,8 +84,8 @@ export default function ExerciseEditorPage() {
 							<Typography gutterBottom variant="h4">
 								Preview
 							</Typography>
-							{exercise ? (
-								<NodeView node={exercise} />
+							{exercise?.root ? (
+								<NodeView node={exercise.root} />
 							) : (
 								<Typography>no preview available</Typography>
 							)}
