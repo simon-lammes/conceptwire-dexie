@@ -3,6 +3,7 @@
 import { NodeEditor } from "@/components/node-editor";
 import { NodeSelection } from "@/components/node-selection";
 import { NodeView } from "@/components/node-view";
+import { useExercise } from "@/hooks/use-exercise";
 import { type Node, exerciseNodeTypes } from "@/models/node";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Card, CardContent } from "@mui/material";
@@ -15,6 +16,8 @@ import { useState } from "react";
 
 export default function ExerciseEditorPage() {
 	const [exercise, setExercise] = useState<Node | undefined>(undefined);
+	const exerciseDb = useExercise("hello");
+	console.log("todo (remove)", exercise);
 	return (
 		<>
 			<AppBar position="sticky">

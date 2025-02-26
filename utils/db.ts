@@ -18,5 +18,6 @@ db.version(1).stores({
 // Connect your dexie-cloud database:
 db.cloud.configure({
 	databaseUrl: "https://ze88tbqtt.dexie.cloud",
-	requireAuth: true, // optional
+	requireAuth: true,
+	customLoginGui: true,
 });

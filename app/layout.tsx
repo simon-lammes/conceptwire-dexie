@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import theme from "@/app/theme";
+import { AuthDialogManager } from "@/components/auth/auth-dialog-manager";
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
@@ -26,7 +27,10 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={roboto.variable}>
 				<AppRouterCacheProvider>
-					<ThemeProvider theme={theme}>{children}</ThemeProvider>
+					<ThemeProvider theme={theme}>
+						<AuthDialogManager />
+						{children}
+					</ThemeProvider>
 				</AppRouterCacheProvider>
 			</body>
 		</html>
