@@ -62,7 +62,8 @@ export function AuthDialogManager() {
 					<Typography
 						key={alert.messageCode}
 						variant="body2"
-						color={alert.type === "error" ? "error" : "warning"}
+						color={alert.type}
+						sx={{ paddingTop: 1 }}
 					>
 						{resolveText(alert)}
 					</Typography>
