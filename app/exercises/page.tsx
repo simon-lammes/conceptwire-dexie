@@ -2,16 +2,17 @@
 
 import { db } from "@/utils/db";
 import MenuIcon from "@mui/icons-material/Menu";
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useLiveQuery } from "dexie-react-hooks";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import type { Exercise } from "@/models/exercise";
+import Link from "next/link";
+import { Masonry } from "@mui/lab";
 
 export default function ExercisesPage() {
 	const router = useRouter();
@@ -42,20 +43,23 @@ export default function ExercisesPage() {
 					</Button>
 				</Toolbar>
 			</AppBar>
-			<Box sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-				<List>
+			<Box sx={{ padding: 2 }}>
+				<Masonry columns={3} spacing={2}>
 					{exercises?.map((exercise) => (
-						<ListItem key={exercise.id} disablePadding>
-							<ListItemButton
-								component={Link}
-								href={`/exercises/${exercise.id}/edit`}
-							>
-								<ListItemText primary={exercise.id} />
-							</ListItemButton>
-						</ListItem>
-					))}
-				</List>
+						<ExerciseCard key={exercise.id} exercise={exercise} />
+					)) ?? []}
+				</Masonry>
 			</Box>
 		</>
 	);
 }
+
+const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
+	return (
+		<Card component={Link} href={`/exercises/${exercise.id}/edit`}>
+			<CardActionArea sx={{ minHeight: "100%" }}>
+				<CardContent>{exercise.id}</CardContent>
+			</CardActionArea>
+		</Card>
+	);
+};
