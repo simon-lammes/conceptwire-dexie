@@ -59,8 +59,8 @@ export default function ExercisesPage() {
 
 const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
 	return (
-		<Card component={Link} href={`/exercises/${exercise.id}/edit`}>
-			<CardActionArea sx={{ minHeight: "100%" }}>
+		<Card>
+			<CardActionArea component={Link} href={`/exercises/${exercise.id}/edit`}>
 				<CardContent>
 					{exercise.root ? <NodeView node={exercise.root} /> : "empty exercise"}
 				</CardContent>

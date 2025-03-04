@@ -65,8 +65,8 @@ export default function ConceptsPage() {
 
 const ConceptCard = ({ concept }: { concept: Concept }) => {
 	return (
-		<Card component={Link} href={`/concepts/${concept.id}/edit`}>
-			<CardActionArea sx={{ minHeight: "100%" }}>
+		<Card>
+			<CardActionArea component={Link} href={`/concepts/${concept.id}/edit`}>
 				<CardHeader title={concept.title} />
 				<CardContent>
 					{concept.descriptionNodes?.map((descriptionNode) => (
