@@ -17,9 +17,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { use, useId, useState } from "react";
 import type { Concept } from "@/models/concept";
+import { NodeArrayEditor } from "@/components/node-array-editor";
 
 export default function ConceptEditorPage({
 	params,
@@ -28,7 +29,11 @@ export default function ConceptEditorPage({
 }) {
 	const { conceptId } = use(params);
 	const router = useRouter();
-	const [concept, setConcept] = useState<Concept>({ id: conceptId, title: "" });
+	const [concept, setConcept] = useState<Concept>({
+		id: conceptId,
+		title: "",
+		descriptionNodes: [],
+	});
 	useEffect(() => {
 		db.concepts.get(conceptId).then((dbConcept) => {
 			if (dbConcept) {
@@ -36,6 +41,11 @@ export default function ConceptEditorPage({
 			}
 		});
 	}, [conceptId]);
+
+	const onConceptChange = useCallback(async (newConcept: Concept) => {
+		setConcept(newConcept);
+		await updateConceptInDb(newConcept);
+	}, []);
 
 	return (
 		<>
@@ -78,14 +88,19 @@ export default function ConceptEditorPage({
 								label="Title"
 								type="text"
 								fullWidth
-								variant="standard"
+								variant="outlined"
 								value={concept.title}
 								onChange={async (ev) => {
 									const title = ev.target.value;
-									const updatedConcept = { ...concept, title };
-									setConcept(updatedConcept);
-									await updateConceptInDb(updatedConcept);
+									await onConceptChange({ ...concept, title });
 								}}
+							/>
+							<NodeArrayEditor
+								sx={{ paddingTop: 2 }}
+								nodes={concept.descriptionNodes ?? []}
+								onNodesChange={(newNodes) =>
+									onConceptChange({ ...concept, descriptionNodes: newNodes })
+								}
 							/>
 						</CardContent>
 					</Card>

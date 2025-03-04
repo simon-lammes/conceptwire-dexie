@@ -1,13 +1,15 @@
 import { NodeEditor } from "@/components/node-editor";
 import { contentNodeTypes, type Node } from "@/models/node";
 import { NodeSelection } from "@/components/node-selection";
+import { Box, type BoxProps } from "@mui/material";
 
 export const NodeArrayEditor = ({
 	nodes,
 	onNodesChange,
-}: { nodes: Node[]; onNodesChange: (newNodes: Node[]) => void }) => {
+	...props
+}: BoxProps & { nodes: Node[]; onNodesChange: (newNodes: Node[]) => void }) => {
 	return (
-		<>
+		<Box {...props}>
 			{nodes.map((node) => (
 				<NodeEditor
 					key={node.id}
@@ -30,6 +32,6 @@ export const NodeArrayEditor = ({
 					onNodesChange([...nodes, selectedNode])
 				}
 			/>
-		</>
+		</Box>
 	);
 };
