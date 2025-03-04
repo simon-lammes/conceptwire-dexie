@@ -2,7 +2,13 @@
 
 import { db } from "@/utils/db";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Card, CardActionArea, CardContent } from "@mui/material";
+import {
+	Box,
+	Card,
+	CardActionArea,
+	CardContent,
+	CardHeader,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -13,6 +19,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import type { Concept } from "@/models/concept";
+import { NodeView } from "@/components/node-view";
 
 export default function ConceptsPage() {
 	const router = useRouter();
@@ -58,7 +65,12 @@ const ConceptCard = ({ concept }: { concept: Concept }) => {
 	return (
 		<Card component={Link} href={`/concepts/${concept.id}/edit`}>
 			<CardActionArea sx={{ minHeight: "100%" }}>
-				<CardContent>empty concept</CardContent>
+				<CardHeader title={concept.title} />
+				<CardContent>
+					{concept.descriptionNodes?.map((descriptionNode) => (
+						<NodeView key={descriptionNode.id} node={descriptionNode} />
+					))}
+				</CardContent>
 			</CardActionArea>
 		</Card>
 	);
