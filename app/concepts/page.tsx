@@ -1,7 +1,6 @@
 "use client";
 
 import { db } from "@/utils/db";
-import MenuIcon from "@mui/icons-material/Menu";
 import {
 	Box,
 	Card,
@@ -20,6 +19,7 @@ import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import type { Concept } from "@/models/concept";
 import { NodeView } from "@/components/node-view";
+import { ArrowBack } from "@mui/icons-material";
 
 export default function ConceptsPage() {
 	const router = useRouter();
@@ -32,10 +32,12 @@ export default function ConceptsPage() {
 						size="large"
 						edge="start"
 						color="inherit"
-						aria-label="menu"
+						aria-label="back"
 						sx={{ mr: 2 }}
+						component={Link}
+						href="/"
 					>
-						<MenuIcon />
+						<ArrowBack />
 					</IconButton>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Concepts

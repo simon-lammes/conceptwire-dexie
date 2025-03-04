@@ -1,7 +1,6 @@
 "use client";
 
 import { db } from "@/utils/db";
-import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Card, CardActionArea, CardContent } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -14,6 +13,7 @@ import type { Exercise } from "@/models/exercise";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import { NodeView } from "@/components/node-view";
+import { ArrowBack } from "@mui/icons-material";
 
 export default function ExercisesPage() {
 	const router = useRouter();
@@ -26,10 +26,12 @@ export default function ExercisesPage() {
 						size="large"
 						edge="start"
 						color="inherit"
-						aria-label="menu"
+						aria-label="back"
 						sx={{ mr: 2 }}
+						component={Link}
+						href="/"
 					>
-						<MenuIcon />
+						<ArrowBack />
 					</IconButton>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Exercises
