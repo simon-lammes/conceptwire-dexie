@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import type { Exercise } from "@/models/exercise";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
+import { NodeView } from "@/components/node-view";
 
 export default function ExercisesPage() {
 	const router = useRouter();
@@ -58,7 +59,9 @@ const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
 	return (
 		<Card component={Link} href={`/exercises/${exercise.id}/edit`}>
 			<CardActionArea sx={{ minHeight: "100%" }}>
-				<CardContent>{exercise.id}</CardContent>
+				<CardContent>
+					{exercise.root ? <NodeView node={exercise.root} /> : "empty exercise"}
+				</CardContent>
 			</CardActionArea>
 		</Card>
 	);
