@@ -1,12 +1,7 @@
-import { NodeEditor } from "@/components/node-editor";
-import { NodeSelection } from "@/components/node-selection";
-import {
-	type Node,
-	type QuestionAnswerExerciseNode,
-	contentNodeTypes,
-} from "@/models/node";
+import type { Node, QuestionAnswerExerciseNode } from "@/models/node";
 import { Box, Divider } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { NodeArrayEditor } from "@/components/node-array-editor";
 
 export const QuestionAnswerExerciseNodeEditor = ({
 	node,
@@ -24,69 +19,20 @@ export const QuestionAnswerExerciseNodeEditor = ({
 			}}
 		>
 			<Typography>Question</Typography>
-			{node.questionNodes.map((questionNode) => (
-				<NodeEditor
-					key={questionNode.id}
-					node={questionNode}
-					onNodeChange={(newNode) =>
-						onNodeChange({
-							...node,
-							questionNodes: node.questionNodes.map((existingNode) =>
-								existingNode.id === newNode.id ? newNode : existingNode,
-							),
-						})
-					}
-					onNodeRemoved={() => {
-						onNodeChange({
-							...node,
-							questionNodes: node.questionNodes.filter(
-								(x) => x.id !== questionNode.id,
-							),
-						});
-					}}
-				/>
-			))}
-			<NodeSelection
-				nodeTypes={contentNodeTypes}
-				onNodeSelected={(selectedNode) =>
-					onNodeChange({
-						...node,
-						questionNodes: [...node.questionNodes, selectedNode],
-					})
+			<NodeArrayEditor
+				nodes={node.questionNodes}
+				onNodesChange={(newNodes) =>
+					onNodeChange({ ...node, questionNodes: newNodes })
 				}
 			/>
 
 			<Divider />
+
 			<Typography>Answer</Typography>
-			{node.answerNodes.map((answerNode) => (
-				<NodeEditor
-					key={answerNode.id}
-					node={answerNode}
-					onNodeChange={(newNode) =>
-						onNodeChange({
-							...node,
-							answerNodes: node.answerNodes.map((existingNode) =>
-								existingNode.id === newNode.id ? newNode : existingNode,
-							),
-						})
-					}
-					onNodeRemoved={() =>
-						onNodeChange({
-							...node,
-							answerNodes: node.answerNodes.filter(
-								(x) => x.id !== answerNode.id,
-							),
-						})
-					}
-				/>
-			))}
-			<NodeSelection
-				nodeTypes={contentNodeTypes}
-				onNodeSelected={(selectedNode) =>
-					onNodeChange({
-						...node,
-						answerNodes: [...node.answerNodes, selectedNode],
-					})
+			<NodeArrayEditor
+				nodes={node.answerNodes}
+				onNodesChange={(newNodes) =>
+					onNodeChange({ ...node, answerNodes: newNodes })
 				}
 			/>
 		</Box>
