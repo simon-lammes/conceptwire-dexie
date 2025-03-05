@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { use, useCallback, useId, useMemo, useState } from "react";
+import { ConceptsSelect } from "@/components/concepts/concepts-select";
 
 export default function ExerciseEditorPage({
 	params,
@@ -75,6 +76,13 @@ export default function ExerciseEditorPage({
 							<Typography gutterBottom variant="h4">
 								Source
 							</Typography>
+							<ConceptsSelect
+								sx={{ pt: 2, pb: 3 }}
+								selectedConceptIds={exercise.conceptIds ?? []}
+								onSelectedConceptIdsChange={(conceptIds) =>
+									setExercise({ ...exercise, conceptIds })
+								}
+							/>
 							{exercise?.root ? (
 								<NodeEditor
 									node={exercise.root}
