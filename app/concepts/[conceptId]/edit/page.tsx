@@ -58,7 +58,7 @@ export default function ConceptEditorPage({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href="/concepts"
+						href={`/concepts/${conceptId}`}
 					>
 						<ArrowBack />
 					</IconButton>
