@@ -16,7 +16,7 @@ export const ConceptsSelect = ({
 	selectedConceptIds: string[];
 	onSelectedConceptIdsChange: (selectedConcepts: string[]) => void;
 }) => {
-	const concepts = useLiveQuery(() => db.concepts.toArray());
+	const concepts = useLiveQuery(() => db.concepts.toArray(), []);
 	return (
 		<Autocomplete
 			multiple

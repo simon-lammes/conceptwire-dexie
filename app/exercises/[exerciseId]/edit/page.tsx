@@ -3,7 +3,7 @@
 import { NodeEditor } from "@/components/node-editor";
 import { NodeSelection } from "@/components/node-selection";
 import { NodeView } from "@/components/node-view";
-import { useExercise } from "@/hooks/use-exercise";
+import { useExercise } from "@/hooks/exercises/use-exercise";
 import type { Exercise } from "@/models/exercise";
 import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";

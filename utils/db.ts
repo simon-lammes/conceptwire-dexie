@@ -17,7 +17,7 @@ export const db = new Dexie("conceptwire", {
 };
 
 db.version(1).stores({
-	exercises: "id",
+	exercises: "id, *conceptIds",
 	concepts: "id",
 });
 
