@@ -45,7 +45,8 @@ export default function ConceptsPage() {
 					<Button
 						color="inherit"
 						onClick={() => {
-							router.push("/concepts/myId/edit");
+							const newConceptId = crypto.randomUUID();
+							router.push(`/concepts/${newConceptId}/edit`);
 						}}
 					>
 						Create

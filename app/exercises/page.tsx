@@ -39,7 +39,8 @@ export default function ExercisesPage() {
 					<Button
 						color="inherit"
 						onClick={() => {
-							router.push("/exercises/myId/edit");
+							const newExerciseId = crypto.randomUUID();
+							router.push(`/exercises/${newExerciseId}/edit`);
 						}}
 					>
 						Create
