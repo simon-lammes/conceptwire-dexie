@@ -1,6 +1,8 @@
 "use client";
 import {
 	AppBar,
+	Box,
+	Button,
 	Container,
 	IconButton,
 	Toolbar,
@@ -44,7 +46,31 @@ export default function StudyPage({
 			</AppBar>
 			<Container sx={{ py: 4 }}>
 				{exercise?.root ? <NodeView node={exercise.root} /> : undefined}
+				<ExerciseFeedback />
 			</Container>
 		</>
 	);
 }
+
+const ExerciseFeedback = () => {
+	return (
+		<Box sx={{ display: "flex", gap: 4, pt: 4, maxWidth: "sm" }}>
+			<Button
+				size="large"
+				color="error"
+				variant="contained"
+				sx={{ flexGrow: 1 }}
+			>
+				failure
+			</Button>
+			<Button
+				size="large"
+				color="success"
+				variant="contained"
+				sx={{ flexGrow: 1 }}
+			>
+				success
+			</Button>
+		</Box>
+	);
+};
