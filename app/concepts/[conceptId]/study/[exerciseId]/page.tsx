@@ -1,22 +1,20 @@
 "use client";
 import {
 	AppBar,
-	Box,
-	Button,
 	Container,
 	IconButton,
 	Toolbar,
 	Typography,
 } from "@mui/material";
-import { use } from "react";
+import { use, useState } from "react";
 import { ArrowBack } from "@mui/icons-material";
 import Link from "next/link";
 import { useConcept } from "@/hooks/use-concept";
 import { NodeView } from "@/components/node-view";
 import { useExercise } from "@/hooks/exercises/use-exercise";
 import { persistExerciseFailure } from "@/utils/experiences/persist-exercise-failure";
-import { db } from "@/utils/db";
 import { persistExerciseSuccess } from "@/utils/experiences/persist-exercise-success";
+import { db } from "@/utils/db";
 
 export default function StudyPage({
 	params,
@@ -26,6 +24,7 @@ export default function StudyPage({
 	const { conceptId, exerciseId } = use(params);
 	const concept = useConcept(conceptId);
 	const exercise = useExercise(exerciseId);
+	const [showSolution, setShowSolution] = useState(false);
 
 	return (
 		<>
@@ -48,38 +47,26 @@ export default function StudyPage({
 				</Toolbar>
 			</AppBar>
 			<Container sx={{ py: 4 }}>
-				{exercise?.root ? <NodeView node={exercise.root} /> : undefined}
-				<ExerciseFeedback exerciseId={exerciseId} />
+				{exercise?.root ? (
+					<NodeView
+						node={exercise.root}
+						context={{
+							showSolution,
+							onShowSolution: () => setShowSolution(true),
+							onExerciseFailure: () =>
+								persistExerciseFailure({
+									userId: db.cloud.currentUserId,
+									exerciseId,
+								}),
+							onExerciseSuccess: () =>
+								persistExerciseSuccess({
+									userId: db.cloud.currentUserId,
+									exerciseId,
+								}),
+						}}
+					/>
+				) : undefined}
 			</Container>
 		</>
 	);
 }
-
-const ExerciseFeedback = ({ exerciseId }: { exerciseId: string }) => {
-	return (
-		<Box sx={{ display: "flex", gap: 4, pt: 4, maxWidth: "sm" }}>
-			<Button
-				size="large"
-				color="error"
-				variant="contained"
-				sx={{ flexGrow: 1 }}
-				onClick={() =>
-					persistExerciseFailure({ userId: db.cloud.currentUserId, exerciseId })
-				}
-			>
-				failure
-			</Button>
-			<Button
-				size="large"
-				color="success"
-				variant="contained"
-				sx={{ flexGrow: 1 }}
-				onClick={() =>
-					persistExerciseSuccess({ userId: db.cloud.currentUserId, exerciseId })
-				}
-			>
-				success
-			</Button>
-		</Box>
-	);
-};
