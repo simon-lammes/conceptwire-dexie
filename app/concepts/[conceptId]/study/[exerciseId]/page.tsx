@@ -14,6 +14,9 @@ import Link from "next/link";
 import { useConcept } from "@/hooks/use-concept";
 import { NodeView } from "@/components/node-view";
 import { useExercise } from "@/hooks/exercises/use-exercise";
+import { persistExerciseFailure } from "@/utils/experiences/persist-exercise-failure";
+import { db } from "@/utils/db";
+import { persistExerciseSuccess } from "@/utils/experiences/persist-exercise-success";
 
 export default function StudyPage({
 	params,
@@ -46,13 +49,13 @@ export default function StudyPage({
 			</AppBar>
 			<Container sx={{ py: 4 }}>
 				{exercise?.root ? <NodeView node={exercise.root} /> : undefined}
-				<ExerciseFeedback />
+				<ExerciseFeedback exerciseId={exerciseId} />
 			</Container>
 		</>
 	);
 }
 
-const ExerciseFeedback = () => {
+const ExerciseFeedback = ({ exerciseId }: { exerciseId: string }) => {
 	return (
 		<Box sx={{ display: "flex", gap: 4, pt: 4, maxWidth: "sm" }}>
 			<Button
@@ -60,6 +63,9 @@ const ExerciseFeedback = () => {
 				color="error"
 				variant="contained"
 				sx={{ flexGrow: 1 }}
+				onClick={() =>
+					persistExerciseFailure({ userId: db.cloud.currentUserId, exerciseId })
+				}
 			>
 				failure
 			</Button>
@@ -68,6 +74,9 @@ const ExerciseFeedback = () => {
 				color="success"
 				variant="contained"
 				sx={{ flexGrow: 1 }}
+				onClick={() =>
+					persistExerciseSuccess({ userId: db.cloud.currentUserId, exerciseId })
+				}
 			>
 				success
 			</Button>
