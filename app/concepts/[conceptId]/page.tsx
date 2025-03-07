@@ -19,7 +19,10 @@ export default function ConceptDetailPage({
 }) {
 	const { conceptId } = use(params);
 	const concept = useConcept(conceptId);
-	const exerciseToStudy = useExerciseToStudy(conceptId);
+	const exerciseToStudy = useExerciseToStudy({
+		conceptId,
+		exerciseCooldownMillis: 10_000,
+	});
 	return (
 		<>
 			<AppBar position="sticky">
