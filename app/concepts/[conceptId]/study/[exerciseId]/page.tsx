@@ -1,9 +1,12 @@
 "use client";
 import {
 	AppBar,
+	Avatar,
+	Box,
 	Container,
 	IconButton,
 	Toolbar,
+	Tooltip,
 	Typography,
 } from "@mui/material";
 import { use, useState } from "react";
@@ -15,6 +18,7 @@ import { useExercise } from "@/hooks/exercises/use-exercise";
 import { persistExerciseFailure } from "@/utils/experiences/persist-exercise-failure";
 import { persistExerciseSuccess } from "@/utils/experiences/persist-exercise-success";
 import { db } from "@/utils/db";
+import { useExperience } from "@/hooks/experiences/use-experience";
 
 export default function StudyPage({
 	params,
@@ -25,6 +29,7 @@ export default function StudyPage({
 	const concept = useConcept(conceptId);
 	const exercise = useExercise(exerciseId);
 	const [showSolution, setShowSolution] = useState(false);
+	const experience = useExperience(exerciseId);
 
 	return (
 		<>
@@ -41,9 +46,20 @@ export default function StudyPage({
 					>
 						<ArrowBack />
 					</IconButton>
-					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-						Study {concept?.title}
-					</Typography>
+					<Box
+						sx={{ flexGrow: 1, display: "flex", alignItems: "center", gap: 2 }}
+					>
+						<Typography variant="h6" component="h1">
+							Study {concept?.title}
+						</Typography>
+						{experience && (
+							<Tooltip
+								title={`You succeeded with this exercise for ${experience.correctStreak} times in a row.`}
+							>
+								<Avatar>{experience.correctStreak}</Avatar>
+							</Tooltip>
+						)}
+					</Box>
 				</Toolbar>
 			</AppBar>
 			<Container sx={{ py: 4 }}>
