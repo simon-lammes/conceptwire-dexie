@@ -3,6 +3,9 @@ import {
 	AppBar,
 	Avatar,
 	Box,
+	Card,
+	CardContent,
+	CardHeader,
 	Container,
 	IconButton,
 	Toolbar,
@@ -19,6 +22,9 @@ import { persistExerciseFailure } from "@/utils/experiences/persist-exercise-fai
 import { persistExerciseSuccess } from "@/utils/experiences/persist-exercise-success";
 import { db } from "@/utils/db";
 import { useExperience } from "@/hooks/experiences/use-experience";
+import type { Experience } from "@/models/experience";
+import { formatRelative } from "date-fns";
+import Grid from "@mui/material/Grid2";
 
 export default function StudyPage({
 	params,
@@ -52,37 +58,79 @@ export default function StudyPage({
 						<Typography variant="h6" component="h1">
 							Study {concept?.title}
 						</Typography>
-						{experience && (
-							<Tooltip
-								title={`You succeeded with this exercise for ${experience.correctStreak} times in a row.`}
-							>
-								<Avatar>{experience.correctStreak}</Avatar>
-							</Tooltip>
-						)}
 					</Box>
 				</Toolbar>
 			</AppBar>
-			<Container sx={{ py: 4 }}>
-				{exercise?.root ? (
-					<NodeView
-						node={exercise.root}
-						context={{
-							showSolution,
-							onShowSolution: () => setShowSolution(true),
-							onExerciseFailure: () =>
-								persistExerciseFailure({
-									userId: db.cloud.currentUserId,
-									exerciseId,
-								}),
-							onExerciseSuccess: () =>
-								persistExerciseSuccess({
-									userId: db.cloud.currentUserId,
-									exerciseId,
-								}),
-						}}
-					/>
-				) : undefined}
+			<Container
+				sx={{
+					py: 4,
+				}}
+			>
+				<Grid container spacing={2} sx={{ alignItems: "stretch" }}>
+					<Grid size={6} sx={{ alignItems: "stretch" }}>
+						<StudyPerformanceOverview />
+					</Grid>
+					<Grid size={6} sx={{ alignItems: "stretch" }}>
+						{experience && (
+							<ExercisePerformanceOverview experience={experience} />
+						)}
+					</Grid>
+					<Grid size={12}>
+						{exercise?.root ? (
+							<Card>
+								<CardContent>
+									<NodeView
+										node={exercise.root}
+										context={{
+											showSolution,
+											onShowSolution: () => setShowSolution(true),
+											onExerciseFailure: () =>
+												persistExerciseFailure({
+													userId: db.cloud.currentUserId,
+													exerciseId,
+												}),
+											onExerciseSuccess: () =>
+												persistExerciseSuccess({
+													userId: db.cloud.currentUserId,
+													exerciseId,
+												}),
+										}}
+									/>
+								</CardContent>
+							</Card>
+						) : undefined}
+					</Grid>
+				</Grid>
 			</Container>
 		</>
 	);
 }
+
+const StudyPerformanceOverview = () => {
+	return (
+		<Card sx={{ height: "100%" }}>
+			<CardHeader title="Study performance" />
+			<CardContent>todo</CardContent>
+		</Card>
+	);
+};
+
+const ExercisePerformanceOverview = ({
+	experience,
+}: { experience: Experience }) => {
+	return (
+		<Card sx={{ height: "100%" }}>
+			<CardHeader
+				title="Exercise performance"
+				subheader={`Last studied ${formatRelative(experience.lastPracticedAt, new Date())}`}
+				avatar={
+					<Tooltip
+						title={`You succeeded with this exercise for ${experience.correctStreak} times in a row.`}
+					>
+						<Avatar>{experience.correctStreak}</Avatar>
+					</Tooltip>
+				}
+			/>
+		</Card>
+	);
+};
