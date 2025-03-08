@@ -1,5 +1,5 @@
 import type { ProofreadingExerciseNode } from "@/models/nodes/proofreading-exercise-node";
-import { Box, styled, useMediaQuery } from "@mui/material";
+import { alpha, Box, styled, useMediaQuery } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { DiffEditor, type MonacoDiffEditor } from "@monaco-editor/react";
 import { useMemo, useRef } from "react";
@@ -107,11 +107,16 @@ const DiffText = ({ node }: { node: ProofreadingExerciseNode }) => {
 	});
 };
 
-const AddedText = styled("span")({
-	textDecoration: "underline",
-	fontWeight: "bold",
-});
+const AddedText = styled("span")(({ theme }) => ({
+	color: theme.palette.success.main,
+	backgroundColor: alpha(theme.palette.success.main, 0.1),
+	fontWeight: theme.typography.fontWeightBold,
+}));
 
-const RemovedText = styled("span")({ textDecoration: "line-through" });
+const RemovedText = styled("span")(({ theme }) => ({
+	color: theme.palette.error.main,
+	backgroundColor: alpha(theme.palette.error.main, 0.1),
+	fontWeight: theme.typography.fontWeightBold,
+}));
 
 const UntouchedText = styled("span")();

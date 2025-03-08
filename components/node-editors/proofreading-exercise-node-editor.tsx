@@ -18,7 +18,7 @@ export const ProofreadingExerciseNodeEditor = ({
 				label="Incorrect text"
 				multiline
 				rows={4}
-				value={node.incorrectText}
+				defaultValue={node.incorrectText}
 				variant="outlined"
 				onChange={(event) => {
 					onNodeChange({ ...node, incorrectText: event.target.value });
@@ -31,7 +31,7 @@ export const ProofreadingExerciseNodeEditor = ({
 				label="Correct text"
 				multiline
 				rows={4}
-				value={node.correctText}
+				defaultValue={node.correctText}
 				variant="outlined"
 				onChange={(event) => {
 					onNodeChange({ ...node, correctText: event.target.value });
