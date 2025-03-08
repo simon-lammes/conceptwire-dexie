@@ -36,10 +36,10 @@ export const ProofreadingExerciseNodeEditor = ({
 				label="Correct text"
 				multiline
 				rows={4}
-				value={node.incorrectText}
+				value={node.correctText}
 				variant="outlined"
 				onChange={(event) => {
-					onNodeChange({ ...node, incorrectText: event.target.value });
+					onNodeChange({ ...node, correctText: event.target.value });
 				}}
 			/>
 		</Box>

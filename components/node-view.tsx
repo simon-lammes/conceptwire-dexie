@@ -17,7 +17,7 @@ export const NodeView = ({
 		case "image":
 			return <ImageView node={node} />;
 		case "proofreadingExercise":
-			return <ProofreadingExerciseNodeView node={node} />;
+			return <ProofreadingExerciseNodeView node={node} context={context} />;
 		default:
 			return "unknown node type";
 	}
