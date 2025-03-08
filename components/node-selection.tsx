@@ -1,17 +1,18 @@
 import type { Node, NodeType } from "@/models/node";
 import { Article, Image, QuestionMark } from "@mui/icons-material";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, type BoxProps, IconButton, Tooltip } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 
 export const NodeSelection = ({
 	onNodeSelected,
 	nodeTypes,
-}: {
+	...props
+}: BoxProps & {
 	onNodeSelected: (node: Node) => void;
 	nodeTypes: readonly NodeType[];
 }) => {
 	return (
-		<Box>
+		<Box {...props}>
 			{nodeTypes.includes("questionAnswerExercise") && (
 				<Tooltip title="Question-answer exercise">
 					<IconButton

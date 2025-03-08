@@ -1,6 +1,8 @@
-import { Box, Divider, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import type { Node } from "@/models/node";
 import type { ProofreadingExerciseNode } from "@/models/nodes/proofreading-exercise-node";
+import Typography from "@mui/material/Typography";
+import { NodeArrayEditor } from "@/components/node-array-editor";
 
 export const ProofreadingExerciseNodeEditor = ({
 	node,
@@ -10,13 +12,7 @@ export const ProofreadingExerciseNodeEditor = ({
 	onNodeChange: (node: Node) => void;
 }) => {
 	return (
-		<Box
-			sx={{
-				display: "flex",
-				flexDirection: "column",
-				gap: 2,
-			}}
-		>
+		<Box>
 			<TextField
 				fullWidth
 				label="Incorrect text"
@@ -29,9 +25,8 @@ export const ProofreadingExerciseNodeEditor = ({
 				}}
 			/>
 
-			<Divider />
-
 			<TextField
+				sx={{ mt: 4 }}
 				fullWidth
 				label="Correct text"
 				multiline
@@ -41,6 +36,18 @@ export const ProofreadingExerciseNodeEditor = ({
 				onChange={(event) => {
 					onNodeChange({ ...node, correctText: event.target.value });
 				}}
+			/>
+
+			<Typography sx={{ mt: 4 }} variant="h6">
+				Explanation (optional)
+			</Typography>
+
+			<NodeArrayEditor
+				sx={{ mt: 2 }}
+				nodes={node.explanationNodes ?? []}
+				onNodesChange={(newNodes) =>
+					onNodeChange({ ...node, explanationNodes: newNodes })
+				}
 			/>
 		</Box>
 	);
