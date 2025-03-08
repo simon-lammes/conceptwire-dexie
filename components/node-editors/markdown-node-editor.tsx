@@ -17,7 +17,7 @@ export const MarkdownNodeEditor = ({
 			label="Markdown"
 			multiline
 			rows={4}
-			value={node.text}
+			defaultValue={node.text}
 			variant="outlined"
 			onChange={(event) => {
 				onNodeChange({ ...node, text: event.target.value });
