@@ -16,47 +16,61 @@ export const ProofreadingExerciseNodeView = ({
 
 	return (
 		<Box>
-			<Typography variant="body1">
-				Correct the following text. The diff view highlights your changes.
-			</Typography>
-			<Box sx={{ pt: 2 }}>
-				<DiffEditor
-					height="12rem"
-					theme={prefersDarkMode ? "vs-dark" : "light"}
-					original={node.incorrectText}
-					modified={node.incorrectText}
-					onMount={(editor, monaco) => {
-						editorRef.current = editor;
-					}}
-				/>
-			</Box>
+			{context?.isInteractive ? (
+				<>
+					<Typography variant="body1">
+						Correct the following text. The diff view highlights your changes.
+					</Typography>
+					<Box sx={{ pt: 2 }}>
+						<DiffEditor
+							height="12rem"
+							theme={prefersDarkMode ? "vs-dark" : "light"}
+							original={node.incorrectText}
+							modified={node.incorrectText}
+							onMount={(editor, monaco) => {
+								editorRef.current = editor;
+							}}
+						/>
+					</Box>
 
-			<Box sx={{ pt: 2, display: "flex", gap: 2 }}>
-				<Button
-					variant="contained"
-					onClick={() => {
-						const value = editorRef.current?.getModel()?.modified.getValue();
-						if (value === node.correctText) {
-							context?.onExerciseSuccess?.();
-						} else {
-							context?.onExerciseFailure?.();
-						}
-					}}
-				>
-					Submit
-				</Button>
-				<Button
-					variant="text"
-					onClick={() => {
-						editorRef.current
-							?.getModel()
-							?.modified.setValue(node.incorrectText);
-					}}
-					startIcon={<ReplayIcon />}
-				>
-					Reset
-				</Button>
-			</Box>
+					<Box sx={{ pt: 2, display: "flex", gap: 2 }}>
+						<Button
+							variant="contained"
+							onClick={() => {
+								const value = editorRef.current
+									?.getModel()
+									?.modified.getValue();
+								if (value === node.correctText) {
+									context?.onExerciseSuccess?.();
+								} else {
+									context?.onExerciseFailure?.();
+								}
+							}}
+						>
+							Submit
+						</Button>
+						<Button
+							variant="text"
+							onClick={() => {
+								editorRef.current
+									?.getModel()
+									?.modified.setValue(node.incorrectText);
+							}}
+							startIcon={<ReplayIcon />}
+						>
+							Reset
+						</Button>
+					</Box>
+				</>
+			) : (
+				<>
+					<Typography variant="h6">Proofreading</Typography>
+					<Typography variant="body1" sx={{ textDecoration: "line-through" }}>
+						{node.incorrectText}
+					</Typography>
+					<Typography variant="body1">{node.correctText}</Typography>
+				</>
+			)}
 		</Box>
 	);
 };
