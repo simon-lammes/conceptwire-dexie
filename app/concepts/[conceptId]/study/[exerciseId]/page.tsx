@@ -82,6 +82,7 @@ export default function StudyPage({
 									<NodeView
 										node={exercise.root}
 										context={{
+											isInteractive: true,
 											showSolution,
 											onShowSolution: () => setShowSolution(true),
 											onExerciseFailure: () =>
