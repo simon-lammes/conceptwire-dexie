@@ -1,11 +1,12 @@
 import type { ProofreadingExerciseNode } from "@/models/nodes/proofreading-exercise-node";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, styled, useMediaQuery } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { DiffEditor, type MonacoDiffEditor } from "@monaco-editor/react";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import Button from "@mui/material/Button";
 import type { NodeContext } from "@/models/node-context";
 import ReplayIcon from "@mui/icons-material/Replay";
+import { diffChars } from "diff";
 
 export const ProofreadingExerciseNodeView = ({
 	node,
@@ -65,12 +66,37 @@ export const ProofreadingExerciseNodeView = ({
 			) : (
 				<>
 					<Typography variant="h6">Proofreading</Typography>
-					<Typography variant="body1" sx={{ textDecoration: "line-through" }}>
-						{node.incorrectText}
+					<Typography variant="body1">
+						<DiffText node={node} />
 					</Typography>
-					<Typography variant="body1">{node.correctText}</Typography>
 				</>
 			)}
 		</Box>
 	);
 };
+
+const DiffText = ({ node }: { node: ProofreadingExerciseNode }) => {
+	const changes = useMemo(
+		() => diffChars(node.incorrectText, node.correctText),
+		[node.incorrectText, node.correctText],
+	);
+	console.log({ changes, node });
+	return changes.map((change, i) => {
+		const TextComponent = change.added
+			? AddedText
+			: change.removed
+				? RemovedText
+				: UntouchedText;
+		// biome-ignore lint/suspicious/noArrayIndexKey: There is no other suitable identifier for changes.
+		return <TextComponent key={i}>{change.value}</TextComponent>;
+	});
+};
+
+const AddedText = styled("span")({
+	textDecoration: "underline",
+	fontWeight: "bold",
+});
+
+const RemovedText = styled("span")({ textDecoration: "line-through" });
+
+const UntouchedText = styled("span")();

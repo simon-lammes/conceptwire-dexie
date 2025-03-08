@@ -35,6 +35,9 @@ importers:
       '@mui/system':
         specifier: ^6.4.6
         version: 6.4.6(@emotion/react@11.14.0(@types/react@19.0.9)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.9)(react@19.0.0))(@types/react@19.0.9)(react@19.0.0))(@types/react@19.0.9)(react@19.0.0)
+      '@types/diff':
+        specifier: ^7.0.1
+        version: 7.0.1
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -47,6 +50,9 @@ importers:
       dexie-react-hooks:
         specifier: ^1.1.7
         version: 1.1.7(@types/react@19.0.9)(dexie@4.0.11)(react@19.0.0)
+      diff:
+        specifier: ^7.0.0
+        version: 7.0.0
       next:
         specifier: 15.1.7
         version: 15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -598,6 +604,9 @@ packages:
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
+  '@types/diff@7.0.1':
+    resolution: {integrity: sha512-R/BHQFripuhW6XPXy05hIvXJQdQ4540KnTvEFHSLjXfHYM41liOLKgIJEyYYiQe796xpaMHfe4Uj/p7Uvng2vA==}
+
   '@types/estree-jsx@1.0.5':
     resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==}
 
@@ -759,6 +768,10 @@ packages:
 
   dexie@4.0.11:
     resolution: {integrity: sha512-SOKO002EqlvBYYKQSew3iymBoN2EQ4BDw/3yprjh7kAfFzjBYkaMNa/pZvcA7HSWlcKSQb9XhPe3wKyQ0x4A8A==}
+
+  diff@7.0.0:
+    resolution: {integrity: sha512-PJWHUb1RFevKCwaFA9RlG5tCd+FO5iRh9A8HEtkmBH2Li03iJriB6m6JIN4rGz3K3JLawI7/veA1xzRKP6ISBw==}
+    engines: {node: '>=0.3.1'}
 
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
@@ -1666,6 +1679,8 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
 
+  '@types/diff@7.0.1': {}
+
   '@types/estree-jsx@1.0.5':
     dependencies:
       '@types/estree': 1.0.6
@@ -1810,6 +1825,8 @@ snapshots:
       react: 19.0.0
 
   dexie@4.0.11: {}
+
+  diff@7.0.0: {}
 
   dom-helpers@5.2.1:
     dependencies:
