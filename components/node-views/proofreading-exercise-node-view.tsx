@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import type { NodeContext } from "@/models/node-context";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { diffChars } from "diff";
+import { NodeView } from "@/components/node-view";
 
 export const ProofreadingExerciseNodeView = ({
 	node,
@@ -65,10 +66,24 @@ export const ProofreadingExerciseNodeView = ({
 				</>
 			) : (
 				<>
-					<Typography variant="h6">Proofreading</Typography>
+					<Typography variant="h6">Corrected text</Typography>
 					<Typography variant="body1">
 						<DiffText node={node} />
 					</Typography>
+					{node.explanationNodes && (
+						<>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Explanation
+							</Typography>
+							{node.explanationNodes?.map((explanationNode) => (
+								<NodeView
+									key={explanationNode.id}
+									node={explanationNode}
+									context={context}
+								/>
+							))}
+						</>
+					)}
 				</>
 			)}
 		</Box>
