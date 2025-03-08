@@ -6,7 +6,7 @@ import { useMemo, useRef } from "react";
 import Button from "@mui/material/Button";
 import type { NodeContext } from "@/models/node-context";
 import ReplayIcon from "@mui/icons-material/Replay";
-import { diffChars } from "diff";
+import { diffWords } from "diff";
 import { NodeView } from "@/components/node-view";
 
 export const ProofreadingExerciseNodeView = ({
@@ -92,10 +92,9 @@ export const ProofreadingExerciseNodeView = ({
 
 const DiffText = ({ node }: { node: ProofreadingExerciseNode }) => {
 	const changes = useMemo(
-		() => diffChars(node.incorrectText, node.correctText),
+		() => diffWords(node.incorrectText, node.correctText),
 		[node.incorrectText, node.correctText],
 	);
-	console.log({ changes, node });
 	return changes.map((change, i) => {
 		const TextComponent = change.added
 			? AddedText
