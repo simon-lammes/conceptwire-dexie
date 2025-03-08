@@ -3,6 +3,7 @@ import { MarkdownView } from "@/components/node-views/markdown-view";
 import { QuestionAnswerExerciseNodeView } from "@/components/node-views/question-answer-exercise-node-view";
 import type { Node } from "@/models/node";
 import type { NodeContext } from "@/models/node-context";
+import { ProofreadingExerciseNodeView } from "@/components/node-views/proofreading-exercise-node-view";
 
 export const NodeView = ({
 	node,
@@ -15,6 +16,8 @@ export const NodeView = ({
 			return <MarkdownView node={node} />;
 		case "image":
 			return <ImageView node={node} />;
+		case "proofreadingExercise":
+			return <ProofreadingExerciseNodeView node={node} />;
 		default:
 			return "unknown node type";
 	}

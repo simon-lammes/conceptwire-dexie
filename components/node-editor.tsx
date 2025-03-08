@@ -3,6 +3,7 @@ import { QuestionAnswerExerciseNodeEditor } from "@/components/node-editors/ques
 import type { Node } from "@/models/node";
 import Typography from "@mui/material/Typography";
 import { MarkdownNodeEditor } from "./node-editors/markdown-node-editor";
+import { ProofreadingExerciseNodeEditor } from "@/components/node-editors/proofreading-exercise-node-editor";
 
 export const NodeEditor = ({
 	node,
@@ -35,6 +36,13 @@ export const NodeEditor = ({
 					node={node}
 					onNodeChange={onNodeChange}
 					onNodeRemoved={onNodeRemoved}
+				/>
+			);
+		case "proofreadingExercise":
+			return (
+				<ProofreadingExerciseNodeEditor
+					node={node}
+					onNodeChange={onNodeChange}
 				/>
 			);
 		default:

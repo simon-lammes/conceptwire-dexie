@@ -1,4 +1,4 @@
-import type { ImageNode } from "@/models/node";
+import type { ImageNode } from "@/models/nodes/image-node";
 import Typography from "@mui/material/Typography";
 
 export const ImageView = ({ node }: { node: ImageNode }) => {

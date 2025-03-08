@@ -1,10 +1,10 @@
 import { NodeView } from "@/components/node-view";
-import type { QuestionAnswerExerciseNode } from "@/models/node";
 import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import type { NodeContext } from "@/models/node-context";
 import Button from "@mui/material/Button";
 import { ExerciseFeedbackRow } from "@/components/exercises/exercise-feedback-row";
+import type { QuestionAnswerExerciseNode } from "@/models/nodes/question-answer-exercise-node";
 
 export const QuestionAnswerExerciseNodeView = ({
 	node,

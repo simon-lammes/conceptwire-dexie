@@ -1,4 +1,3 @@
-import type { ImageNode } from "@/models/node";
 import { MoreVert } from "@mui/icons-material";
 import {
 	Box,
@@ -17,6 +16,7 @@ import type React from "react";
 import { useId } from "react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import type { ImageNode } from "@/models/nodes/image-node";
 
 export const ImageNodeEditor = ({
 	node,

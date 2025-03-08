@@ -1,4 +1,5 @@
-import type { MarkdownNode, Node } from "@/models/node";
+import type { Node } from "@/models/node";
+import type { MarkdownNode } from "@/models/nodes/markdown-node";
 import { TextField } from "@mui/material";
 
 export const MarkdownNodeEditor = ({

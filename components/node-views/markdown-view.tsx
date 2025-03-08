@@ -1,6 +1,6 @@
-import type { MarkdownNode } from "@/models/node";
 import Markdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
+import type { MarkdownNode } from "@/models/nodes/markdown-node";
 
 export const MarkdownView = ({ node }: { node: MarkdownNode }) => {
 	return (

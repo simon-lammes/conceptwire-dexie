@@ -1,7 +1,8 @@
-import type { Node, QuestionAnswerExerciseNode } from "@/models/node";
+import type { Node } from "@/models/node";
 import { Box, Divider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { NodeArrayEditor } from "@/components/node-array-editor";
+import type { QuestionAnswerExerciseNode } from "@/models/nodes/question-answer-exercise-node";
 
 export const QuestionAnswerExerciseNodeEditor = ({
 	node,
