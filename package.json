@@ -11,9 +11,27 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@emotion/cache": "^11.14.0",
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.0",
+		"@monaco-editor/react": "^4.7.0",
+		"@mui/icons-material": "^6.4.4",
+		"@mui/lab": "6.0.0-beta.29",
+		"@mui/material": "^6.4.4",
+		"@mui/material-nextjs": "^6.4.3",
+		"@mui/system": "^6.4.6",
+		"@types/diff": "^7.0.1",
+		"date-fns": "^4.1.0",
+		"dexie": "^4.0.11",
+		"dexie-cloud-addon": "^4.0.11",
+		"dexie-react-hooks": "^1.1.7",
+		"diff": "^7.0.0",
 		"next": "15.1.7",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"react-dropzone": "^14.3.5",
+		"react-markdown": "^10.0.0",
+		"rehype-sanitize": "^6.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
