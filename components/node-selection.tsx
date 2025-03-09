@@ -1,7 +1,8 @@
 import type { Node, NodeType } from "@/models/node";
-import { Article, Image, QuestionMark } from "@mui/icons-material";
+import { Article, Image, QuestionMark, Checklist } from "@mui/icons-material";
 import { Box, type BoxProps, IconButton, Tooltip } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import type { SetExerciseNode } from "@/models/nodes/set-exercise-node";
 
 export const NodeSelection = ({
 	onNodeSelected,
@@ -45,6 +46,24 @@ export const NodeSelection = ({
 						}
 					>
 						<ManageSearchIcon />
+					</IconButton>
+				</Tooltip>
+			)}
+
+			{nodeTypes.includes("setExercise") && (
+				<Tooltip title="Set exercise">
+					<IconButton
+						color="primary"
+						onClick={() =>
+							onNodeSelected({
+								id: crypto.randomUUID(),
+								type: "setExercise",
+								descriptionNodes: [],
+								elements: [],
+							} satisfies SetExerciseNode)
+						}
+					>
+						<Checklist />
 					</IconButton>
 				</Tooltip>
 			)}

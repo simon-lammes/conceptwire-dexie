@@ -4,6 +4,7 @@ import type { Node } from "@/models/node";
 import Typography from "@mui/material/Typography";
 import { MarkdownNodeEditor } from "./node-editors/markdown-node-editor";
 import { ProofreadingExerciseNodeEditor } from "@/components/node-editors/proofreading-exercise-node-editor";
+import { SetExerciseNodeEditor } from "@/components/node-editors/set-exercise-node-editor";
 
 export const NodeEditor = ({
 	node,
@@ -45,6 +46,8 @@ export const NodeEditor = ({
 					onNodeChange={onNodeChange}
 				/>
 			);
+		case "setExercise":
+			return <SetExerciseNodeEditor node={node} onNodeChange={onNodeChange} />;
 		default:
 			return <Typography>unknown type</Typography>;
 	}

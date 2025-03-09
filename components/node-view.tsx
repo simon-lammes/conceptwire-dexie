@@ -4,6 +4,7 @@ import { QuestionAnswerExerciseNodeView } from "@/components/node-views/question
 import type { Node } from "@/models/node";
 import type { NodeContext } from "@/models/node-context";
 import { ProofreadingExerciseNodeView } from "@/components/node-views/proofreading-exercise-node-view";
+import { SetExerciseNodeView } from "@/components/node-views/set-exercise-node-view";
 
 export const NodeView = ({
 	node,
@@ -18,6 +19,8 @@ export const NodeView = ({
 			return <ImageView node={node} />;
 		case "proofreadingExercise":
 			return <ProofreadingExerciseNodeView node={node} context={context} />;
+		case "setExercise":
+			return <SetExerciseNodeView node={node} context={context} />;
 		default:
 			return "unknown node type";
 	}
