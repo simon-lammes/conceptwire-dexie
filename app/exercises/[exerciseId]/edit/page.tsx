@@ -9,8 +9,10 @@ import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";
 import { ArrowBack, MoreVert } from "@mui/icons-material";
 import {
+	Box,
 	Card,
 	CardContent,
+	debounce,
 	ListItemButton,
 	ListItemText,
 	Popover,
@@ -23,7 +25,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { use, useCallback, useId, useMemo, useState } from "react";
+import { use, useCallback, useEffect, useId, useMemo, useState } from "react";
 import { ConceptsSelect } from "@/components/concepts/concepts-select";
 
 export default function ExerciseEditorPage({
@@ -34,13 +36,28 @@ export default function ExerciseEditorPage({
 	const { exerciseId } = use(params);
 	const router = useRouter();
 	const dbExercise = useExercise(exerciseId);
-	const exercise = useMemo(
-		() => ({ id: exerciseId, ...dbExercise }),
-		[exerciseId, dbExercise],
-	);
-	const setExercise = useCallback(
-		(exercise: Exercise) => db.exercises.put(exercise),
-		[],
+
+	const [exercise, setExercise] = useState<Exercise | undefined>(undefined);
+
+	// Load current exercise from db.
+	useEffect(() => {
+		db.exercises
+			.get(exerciseId)
+			.then((exercise) => setExercise(exercise ?? { id: exerciseId }));
+	}, [exerciseId]);
+
+	const updateExerciseInDb = useMemo(() => {
+		return debounce(async (updatedExercise: Exercise) => {
+			db.exercises.put(updatedExercise);
+		}, 500);
+	}, []);
+
+	const onExerciseChange = useCallback(
+		(updatedExercise: Exercise) => {
+			setExercise(updatedExercise);
+			updateExerciseInDb(updatedExercise);
+		},
+		[updateExerciseInDb],
 	);
 
 	return (
@@ -76,29 +93,10 @@ export default function ExerciseEditorPage({
 							<Typography gutterBottom variant="h4">
 								Source
 							</Typography>
-							<ConceptsSelect
-								sx={{ pt: 2, pb: 3 }}
-								selectedConceptIds={exercise.conceptIds ?? []}
-								onSelectedConceptIdsChange={(conceptIds) =>
-									setExercise({ ...exercise, conceptIds })
-								}
-							/>
-							{exercise?.root ? (
-								<NodeEditor
-									node={exercise.root}
-									onNodeChange={(node) =>
-										setExercise({ ...exercise, root: node })
-									}
-									onNodeRemoved={() =>
-										setExercise({ ...exercise, root: undefined })
-									}
-								/>
-							) : (
-								<NodeSelection
-									onNodeSelected={(node) =>
-										setExercise({ ...exercise, root: node })
-									}
-									nodeTypes={exerciseNodeTypes}
+							{exercise && (
+								<SourceEditor
+									exercise={exercise}
+									onExerciseChange={onExerciseChange}
 								/>
 							)}
 						</CardContent>
@@ -122,6 +120,42 @@ export default function ExerciseEditorPage({
 		</>
 	);
 }
+
+const SourceEditor = ({
+	exercise,
+	onExerciseChange,
+}: {
+	exercise: Exercise;
+	onExerciseChange: (updatedExercise: Exercise) => void;
+}) => {
+	return (
+		<Box>
+			<ConceptsSelect
+				sx={{ pt: 2, pb: 3 }}
+				selectedConceptIds={exercise?.conceptIds ?? []}
+				onSelectedConceptIdsChange={(conceptIds) =>
+					onExerciseChange({ ...exercise, conceptIds })
+				}
+			/>
+			{exercise?.root ? (
+				<NodeEditor
+					node={exercise.root}
+					onNodeChange={(node) => onExerciseChange({ ...exercise, root: node })}
+					onNodeRemoved={() =>
+						onExerciseChange({ ...exercise, root: undefined })
+					}
+				/>
+			) : (
+				<NodeSelection
+					onNodeSelected={(node) =>
+						onExerciseChange({ ...exercise, root: node })
+					}
+					nodeTypes={exerciseNodeTypes}
+				/>
+			)}
+		</Box>
+	);
+};
 
 function MoreButton({ onRemove }: { onRemove: () => void }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
