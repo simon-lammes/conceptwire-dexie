@@ -36,9 +36,9 @@ export const useExerciseToStudy = ({
 
 			// Don't take the exercise if it has a higher correct streak than the current exercise.
 			if (
-				experience &&
-				exerciseToStudyExperience != null &&
-				exerciseToStudyExperience.correctStreak < experience?.correctStreak
+				exerciseToStudy &&
+				(exerciseToStudyExperience?.correctStreak ?? 0) <
+					(experience?.correctStreak ?? 0)
 			)
 				continue;
 
