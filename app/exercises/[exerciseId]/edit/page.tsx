@@ -82,7 +82,17 @@ export default function ExerciseEditorPage({
 							variant="text"
 							onClick={() => {
 								const newExerciseId = crypto.randomUUID();
+
 								router.push(`/exercises/${newExerciseId}/edit`);
+
+								// If concepts were selected for the current exercise,
+								// preselect them for the new exercise for improved UX.
+								if (exercise?.conceptIds?.length) {
+									db.exercises.put({
+										id: newExerciseId,
+										conceptIds: exercise.conceptIds,
+									});
+								}
 							}}
 						>
 							Create next
