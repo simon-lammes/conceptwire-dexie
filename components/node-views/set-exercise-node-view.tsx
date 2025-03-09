@@ -1,7 +1,9 @@
 import type { SetExerciseNode } from "@/models/nodes/set-exercise-node";
 import type { NodeContext } from "@/models/node-context";
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { NodeArrayView } from "@/components/node-array-view";
+import Button from "@mui/material/Button";
+import { ExerciseFeedbackRow } from "@/components/exercises/exercise-feedback-row";
 import { Fragment } from "react";
 
 export const SetExerciseNodeView = ({
@@ -11,11 +13,24 @@ export const SetExerciseNodeView = ({
 	return (
 		<Box>
 			<NodeArrayView nodes={node.descriptionNodes} context={context} />
-			{node.elements.map((element) => (
-				<Fragment key={element.id}>
-					<NodeArrayView nodes={element.descriptionNodes} context={context} />
+			<Divider sx={{ my: 2 }} />
+			{context?.showSolution !== false ? (
+				<Fragment>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+						{node.elements.map((element) => (
+							<Box key={element.id}>
+								<NodeArrayView
+									nodes={element.descriptionNodes}
+									context={context}
+								/>
+							</Box>
+						))}
+					</Box>
+					{context && <ExerciseFeedbackRow context={context} />}
 				</Fragment>
-			))}
+			) : (
+				<Button onClick={context?.onShowSolution}>Show solution</Button>
+			)}
 		</Box>
 	);
 };
