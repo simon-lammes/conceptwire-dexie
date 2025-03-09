@@ -1,21 +1,22 @@
 "use client";
 
+import { ConceptsSelect } from "@/components/concepts/concepts-select";
 import { NodeEditor } from "@/components/node-editor";
 import { NodeSelection } from "@/components/node-selection";
 import { NodeView } from "@/components/node-view";
-import { useExercise } from "@/hooks/exercises/use-exercise";
 import type { Exercise } from "@/models/exercise";
 import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";
 import { ArrowBack, MoreVert } from "@mui/icons-material";
 import {
 	Box,
+	Button,
 	Card,
 	CardContent,
-	debounce,
 	ListItemButton,
 	ListItemText,
 	Popover,
+	debounce,
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Grid from "@mui/material/Grid2";
@@ -26,7 +27,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { use, useCallback, useEffect, useId, useMemo, useState } from "react";
-import { ConceptsSelect } from "@/components/concepts/concepts-select";
 
 export default function ExerciseEditorPage({
 	params,
@@ -35,7 +35,6 @@ export default function ExerciseEditorPage({
 }) {
 	const { exerciseId } = use(params);
 	const router = useRouter();
-	const dbExercise = useExercise(exerciseId);
 
 	const [exercise, setExercise] = useState<Exercise | undefined>(undefined);
 
@@ -78,12 +77,23 @@ export default function ExerciseEditorPage({
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Exercise Editor
 					</Typography>
-					<MoreButton
-						onRemove={async () => {
-							await db.exercises.delete(exerciseId);
-							router.push("/exercises");
-						}}
-					/>
+					<Box sx={{ display: "flex", gap: 1 }}>
+						<Button
+							variant="text"
+							onClick={() => {
+								const newExerciseId = crypto.randomUUID();
+								router.push(`/exercises/${newExerciseId}/edit`);
+							}}
+						>
+							Create next
+						</Button>
+						<MoreButton
+							onRemove={async () => {
+								await db.exercises.delete(exerciseId);
+								router.push("/exercises");
+							}}
+						/>
+					</Box>
 				</Toolbar>
 			</AppBar>
 			<Grid container spacing={2} padding={2}>
