@@ -80,6 +80,7 @@ export default function ExerciseEditorPage({
 					<Box sx={{ display: "flex", gap: 1 }}>
 						<Button
 							variant="text"
+							color="inherit"
 							onClick={() => {
 								const newExerciseId = crypto.randomUUID();
 
@@ -186,6 +187,7 @@ function MoreButton({ onRemove }: { onRemove: () => void }) {
 	return (
 		<div>
 			<IconButton
+				color="inherit"
 				aria-describedby={open ? popoverId : undefined}
 				onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
 					event.stopPropagation();

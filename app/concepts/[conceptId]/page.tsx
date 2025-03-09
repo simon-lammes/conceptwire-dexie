@@ -43,7 +43,7 @@ export default function ConceptDetailPage({
 					</Typography>
 					<Box sx={{ display: "flex", gap: 1 }}>
 						<Button
-							variant="contained"
+							color="inherit"
 							component={Link}
 							href={`/concepts/${conceptId}/study/${exerciseToStudy?.id}`}
 							disabled={!exerciseToStudy}
