@@ -1,3 +1,7 @@
+import type { Exercise } from "@/models/exercise";
+import type { StudyResultType } from "@/models/study-result-type";
+import type { Concept } from "@/models/concept";
+
 export interface NodeContext {
 	/**
 	 * Set to true if the user can interact with the nodes.
@@ -8,4 +12,7 @@ export interface NodeContext {
 	onShowSolution?: () => void;
 	onExerciseFailure?: () => void;
 	onExerciseSuccess?: () => void;
+	studyResultType?: StudyResultType;
+	nextExercise?: Exercise;
+	concept?: Concept;
 }

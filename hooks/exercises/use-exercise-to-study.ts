@@ -5,9 +5,14 @@ import type { Experience } from "@/models/experience";
 
 export const useExerciseToStudy = ({
 	conceptId,
-	exerciseCooldownMillis,
-}: { conceptId: string; exerciseCooldownMillis: number }) => {
+	excludedExerciseIds,
+}: { conceptId: string; excludedExerciseIds?: string[] }) => {
+	// For how long will an exercise not be shown again after being practiced?
+	// In the future, this value could be configurable.
+	const exerciseCooldownMillis = 10_000;
+
 	const userId = db.cloud.currentUserId;
+
 	return useLiveQuery(async () => {
 		if (userId === "unauthorized") return;
 
@@ -30,7 +35,10 @@ export const useExerciseToStudy = ({
 		for (const exercise of exercises) {
 			const experience = experiences.find((x) => x.exerciseId === exercise.id);
 
-			// Don't take the exercise if it was practiced to recently.
+			// Don't take the exercise if it belongs to the "excluded" exercises.
+			if (excludedExerciseIds?.includes(exercise.id)) continue;
+
+			// Don't take the exercise if it was practiced too recently.
 			if (experience && experience.lastPracticedAt > maxLastPracticedAt)
 				continue;
 
@@ -55,5 +63,5 @@ export const useExerciseToStudy = ({
 			exerciseToStudyExperience = experience;
 		}
 		return exerciseToStudy;
-	}, [conceptId, exerciseCooldownMillis, userId]);
+	}, [conceptId, exerciseCooldownMillis, userId, excludedExerciseIds]);
 };

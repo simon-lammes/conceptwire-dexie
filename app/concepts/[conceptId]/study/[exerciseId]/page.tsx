@@ -1,4 +1,5 @@
 "use client";
+
 import {
 	AppBar,
 	Avatar,
@@ -25,6 +26,8 @@ import { useExperience } from "@/hooks/experiences/use-experience";
 import type { Experience } from "@/models/experience";
 import { formatRelative } from "date-fns";
 import Grid from "@mui/material/Grid2";
+import { useExerciseToStudy } from "@/hooks/exercises/use-exercise-to-study";
+import type { StudyResultType } from "@/models/study-result-type";
 
 export default function StudyPage({
 	params,
@@ -36,6 +39,14 @@ export default function StudyPage({
 	const exercise = useExercise(exerciseId);
 	const [showSolution, setShowSolution] = useState(false);
 	const experience = useExperience(exerciseId);
+	const nextExercise = useExerciseToStudy({
+		conceptId,
+		excludedExerciseIds: [exerciseId],
+	});
+
+	const [studyResultType, setStudyResultType] = useState<
+		StudyResultType | undefined
+	>(undefined);
 
 	return (
 		<>
@@ -85,16 +96,23 @@ export default function StudyPage({
 											isInteractive: true,
 											showSolution,
 											onShowSolution: () => setShowSolution(true),
-											onExerciseFailure: () =>
+											onExerciseFailure: () => {
+												setStudyResultType("failure");
 												persistExerciseFailure({
 													userId: db.cloud.currentUserId,
 													exerciseId,
-												}),
-											onExerciseSuccess: () =>
+												});
+											},
+											onExerciseSuccess: () => {
+												setStudyResultType("success");
 												persistExerciseSuccess({
 													userId: db.cloud.currentUserId,
 													exerciseId,
-												}),
+												});
+											},
+											nextExercise,
+											studyResultType,
+											concept,
 										}}
 									/>
 								</CardContent>
