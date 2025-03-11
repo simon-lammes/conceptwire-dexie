@@ -13,7 +13,7 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import { use, useState } from "react";
+import { use, useMemo, useState } from "react";
 import { ArrowBack } from "@mui/icons-material";
 import Link from "next/link";
 import { useConcept } from "@/hooks/use-concept";
@@ -28,6 +28,8 @@ import { formatRelative } from "date-fns";
 import Grid from "@mui/material/Grid2";
 import { useExerciseToStudy } from "@/hooks/exercises/use-exercise-to-study";
 import type { StudyResultType } from "@/models/study-result-type";
+import { BarChart } from "@mui/x-charts";
+import { useStudyProgress } from "@/hooks/exercises/use-study-progress";
 
 export default function StudyPage({
 	params,
@@ -39,9 +41,15 @@ export default function StudyPage({
 	const exercise = useExercise(exerciseId);
 	const [showSolution, setShowSolution] = useState(false);
 	const experience = useExperience(exerciseId);
+
+	// Stable references are required for Reacts dependency arrays to work as expected.
+	const excludedExerciseIdsForNextExercise = useMemo(() => {
+		return [exerciseId];
+	}, [exerciseId]);
+
 	const nextExercise = useExerciseToStudy({
 		conceptId,
-		excludedExerciseIds: [exerciseId],
+		excludedExerciseIds: excludedExerciseIdsForNextExercise,
 	});
 
 	const [studyResultType, setStudyResultType] = useState<
@@ -79,7 +87,7 @@ export default function StudyPage({
 			>
 				<Grid container spacing={2} sx={{ alignItems: "stretch" }}>
 					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						<StudyPerformanceOverview />
+						<StudyPerformanceOverview conceptId={conceptId} />
 					</Grid>
 					<Grid size={6} sx={{ alignItems: "stretch" }}>
 						{experience && (
@@ -125,11 +133,45 @@ export default function StudyPage({
 	);
 }
 
-const StudyPerformanceOverview = () => {
+const StudyPerformanceOverview = ({ conceptId }: { conceptId: string }) => {
+	const dataset = useStudyProgress({ conceptId });
+	console.log(dataset);
 	return (
 		<Card sx={{ height: "100%" }}>
 			<CardHeader title="Study performance" />
-			<CardContent>todo</CardContent>
+			<CardContent>
+				{dataset && (
+					<BarChart
+						xAxis={[
+							{
+								id: "barCategories",
+								dataKey: "correctStreak",
+								label: "correct streak",
+								scaleType: "band",
+							},
+						]}
+						yAxis={[
+							{
+								label: "exercise count",
+							},
+						]}
+						series={[
+							{
+								dataKey: "practiced",
+								stack: "exerciseCount",
+								label: "practiced today",
+							},
+							{
+								dataKey: "pending",
+								stack: "exerciseCount",
+								label: "not practiced today",
+							},
+						]}
+						dataset={dataset}
+						height={200}
+					/>
+				)}
+			</CardContent>
 		</Card>
 	);
 };

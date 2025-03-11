@@ -20,6 +20,7 @@
 		"@mui/material": "^6.4.4",
 		"@mui/material-nextjs": "^6.4.3",
 		"@mui/system": "^6.4.6",
+		"@mui/x-charts": "^7.27.1",
 		"@types/diff": "^7.0.1",
 		"date-fns": "^4.1.0",
 		"dexie": "^4.0.11",
