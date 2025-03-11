@@ -67,7 +67,17 @@ export default function ConceptEditorPage({
 					</Typography>
 					<MoreButton
 						onRemove={async () => {
-							await db.concepts.delete(conceptId);
+							await db.transaction(
+								"rw",
+								[db.concepts, db.exerciseConceptReference],
+								async () => {
+									await db.concepts.delete(conceptId);
+									await db.exerciseConceptReference
+										.where("conceptId")
+										.equals(conceptId)
+										.delete();
+								},
+							);
 							router.push("/concepts");
 						}}
 					/>

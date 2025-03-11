@@ -27,6 +27,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { use, useCallback, useEffect, useId, useMemo, useState } from "react";
+import type { ExerciseConceptReference } from "@/models/exercise-concept-reference";
+import { useConceptReferencesOfExercise } from "@/hooks/exercise-concept-references/use-concept-references-of-exercise";
 
 export default function ExerciseEditorPage({
 	params,
@@ -59,6 +61,8 @@ export default function ExerciseEditorPage({
 		[updateExerciseInDb],
 	);
 
+	const exerciseConceptReferences = useConceptReferencesOfExercise(exerciseId);
+
 	return (
 		<>
 			<AppBar position="sticky">
@@ -88,11 +92,25 @@ export default function ExerciseEditorPage({
 
 								// If concepts were selected for the current exercise,
 								// preselect them for the new exercise for improved UX.
-								if (exercise?.conceptIds?.length) {
-									db.exercises.put({
-										id: newExerciseId,
-										conceptIds: exercise.conceptIds,
-									});
+								if (exerciseConceptReferences?.length) {
+									db.transaction(
+										"rw",
+										[db.experiences, db.exerciseConceptReference],
+										async () => {
+											await db.exercises.put({
+												id: newExerciseId,
+											});
+											await db.exerciseConceptReference.bulkPut(
+												exerciseConceptReferences.map(
+													(existingReference) =>
+														({
+															exerciseId: newExerciseId,
+															conceptId: existingReference.conceptId,
+														}) satisfies ExerciseConceptReference,
+												),
+											);
+										},
+									);
 								}
 							}}
 						>
@@ -100,7 +118,17 @@ export default function ExerciseEditorPage({
 						</Button>
 						<MoreButton
 							onRemove={async () => {
-								await db.exercises.delete(exerciseId);
+								await db.transaction(
+									"rw",
+									[db.exercises, db.exerciseConceptReference],
+									async () => {
+										await db.exercises.delete(exerciseId);
+										await db.exerciseConceptReference
+											.where("exerciseId")
+											.equals(exerciseId)
+											.delete();
+									},
+								);
 								router.push("/exercises");
 							}}
 						/>
@@ -114,9 +142,10 @@ export default function ExerciseEditorPage({
 							<Typography gutterBottom variant="h4">
 								Source
 							</Typography>
-							{exercise && (
+							{exercise && exerciseConceptReferences && (
 								<SourceEditor
 									exercise={exercise}
+									exerciseConceptReferences={exerciseConceptReferences}
 									onExerciseChange={onExerciseChange}
 								/>
 							)}
@@ -144,19 +173,41 @@ export default function ExerciseEditorPage({
 
 const SourceEditor = ({
 	exercise,
+	exerciseConceptReferences,
 	onExerciseChange,
 }: {
 	exercise: Exercise;
+	exerciseConceptReferences: ExerciseConceptReference[];
 	onExerciseChange: (updatedExercise: Exercise) => void;
 }) => {
+	const conceptIds = useMemo(
+		() => exerciseConceptReferences.map((x) => x.conceptId),
+		[exerciseConceptReferences],
+	);
 	return (
 		<Box>
 			<ConceptsSelect
 				sx={{ pt: 2, pb: 3 }}
-				selectedConceptIds={exercise?.conceptIds ?? []}
-				onSelectedConceptIdsChange={(conceptIds) =>
-					onExerciseChange({ ...exercise, conceptIds })
-				}
+				selectedConceptIds={conceptIds}
+				onSelectedConceptIdsChange={async (newConceptIds) => {
+					if (newConceptIds.length > conceptIds.length) {
+						const addedConceptId = newConceptIds.find(
+							(x) => !conceptIds.includes(x),
+						);
+						await db.exerciseConceptReference.put({
+							exerciseId: exercise.id,
+							conceptId: addedConceptId,
+						});
+					} else {
+						const removedConceptId = conceptIds.find(
+							(x) => !newConceptIds.includes(x),
+						);
+						await db.exerciseConceptReference.delete([
+							exercise.id,
+							removedConceptId,
+						]);
+					}
+				}}
 			/>
 			{exercise?.root ? (
 				<NodeEditor

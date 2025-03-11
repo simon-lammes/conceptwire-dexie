@@ -19,24 +19,32 @@ export const useExerciseToStudy = ({
 		const maxLastPracticedAt = new Date(
 			new Date().getTime() - exerciseCooldownMillis,
 		);
-		const exercises = await db.exercises
-			.where("conceptIds")
+		const exerciseConceptReferences = await db.exerciseConceptReference
+			.where("conceptId")
 			.equals(conceptId)
 			.toArray();
 		const experiences = await db.experiences
 			.where("[userId+exerciseId]")
-			.anyOf(exercises.map((exercise) => [userId, exercise.id]))
+			.anyOf(
+				exerciseConceptReferences.map((reference) => [
+					userId,
+					reference.exerciseId,
+				]),
+			)
 			.toArray();
 
 		let exerciseToStudy: Exercise | undefined = undefined;
 		let exerciseToStudyExperience: Experience | undefined = undefined;
 
 		// Iterate over exercises to find the best exercise to study.
-		for (const exercise of exercises) {
-			const experience = experiences.find((x) => x.exerciseId === exercise.id);
+		for (const exerciseConceptReference of exerciseConceptReferences) {
+			const experience = experiences.find(
+				(x) => x.exerciseId === exerciseConceptReference.exerciseId,
+			);
 
 			// Don't take the exercise if it belongs to the "excluded" exercises.
-			if (excludedExerciseIds?.includes(exercise.id)) continue;
+			if (excludedExerciseIds?.includes(exerciseConceptReference.exerciseId))
+				continue;
 
 			// Don't take the exercise if it was practiced too recently.
 			if (experience && experience.lastPracticedAt > maxLastPracticedAt)
@@ -59,7 +67,9 @@ export const useExerciseToStudy = ({
 			)
 				continue;
 
-			exerciseToStudy = exercise;
+			exerciseToStudy = await db.exercises.get(
+				exerciseConceptReference.exerciseId,
+			);
 			exerciseToStudyExperience = experience;
 		}
 		return exerciseToStudy;
