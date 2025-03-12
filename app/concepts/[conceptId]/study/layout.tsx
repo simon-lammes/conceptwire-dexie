@@ -57,9 +57,9 @@ export default function StudyLayout({
 					py: 4,
 				}}
 			>
-				<Grid container spacing={2} sx={{ alignItems: "stretch" }}>
+				<Grid container spacing={3} sx={{ alignItems: "stretch" }}>
 					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						<StudyPerformanceOverview conceptId={conceptId} />
+						<StudyProgressOverview conceptId={conceptId} />
 					</Grid>
 					{children}
 				</Grid>
@@ -68,12 +68,12 @@ export default function StudyLayout({
 	);
 }
 
-const StudyPerformanceOverview = ({ conceptId }: { conceptId: string }) => {
+const StudyProgressOverview = ({ conceptId }: { conceptId: string }) => {
 	const dataset = useStudyProgress({ conceptId });
 	console.log(dataset);
 	return (
 		<Card sx={{ height: "100%" }}>
-			<CardHeader title="Study performance" />
+			<CardHeader title="Study progress" />
 			<CardContent>
 				{dataset && (
 					<BarChart

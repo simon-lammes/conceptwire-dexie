@@ -1,6 +1,13 @@
 "use client";
 
-import { Avatar, Card, CardContent, CardHeader, Tooltip } from "@mui/material";
+import {
+	Avatar,
+	Card,
+	CardContent,
+	CardHeader,
+	Stack,
+	Tooltip,
+} from "@mui/material";
 import { use, useMemo, useState } from "react";
 import { useConcept } from "@/hooks/use-concept";
 import { NodeView } from "@/components/node-view";
@@ -42,8 +49,13 @@ export default function StudyPage({
 
 	return (
 		<>
-			<Grid size={6} sx={{ alignItems: "stretch" }}>
-				{experience && <ExercisePerformanceOverview experience={experience} />}
+			<Grid size={6}>
+				<Stack spacing={3} sx={{ height: "100%" }}>
+					{experience && (
+						<ExercisePerformanceOverview experience={experience} />
+					)}
+					<StudyTimeline />
+				</Stack>
 			</Grid>
 			<Grid size={12}>
 				{exercise?.root ? (
@@ -86,7 +98,7 @@ const ExercisePerformanceOverview = ({
 	experience,
 }: { experience: Experience }) => {
 	return (
-		<Card sx={{ height: "100%" }}>
+		<Card>
 			<CardHeader
 				title="Exercise performance"
 				subheader={`Last studied ${formatRelative(experience.lastPracticedAt, new Date())}`}
@@ -98,6 +110,19 @@ const ExercisePerformanceOverview = ({
 					</Tooltip>
 				}
 			/>
+		</Card>
+	);
+};
+
+const StudyTimeline = () => {
+	return (
+		<Card sx={{ flexGrow: 1 }}>
+			<CardHeader title="Timeline" />
+			<CardContent>
+				This could show a history of the result of previous exercises, letting
+				you jump back to them. It could also show you how many exercises are
+				upcoming.
+			</CardContent>
 		</Card>
 	);
 };
