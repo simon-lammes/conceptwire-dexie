@@ -1,21 +1,7 @@
 "use client";
 
-import {
-	AppBar,
-	Avatar,
-	Box,
-	Card,
-	CardContent,
-	CardHeader,
-	Container,
-	IconButton,
-	Toolbar,
-	Tooltip,
-	Typography,
-} from "@mui/material";
+import { Avatar, Card, CardContent, CardHeader, Tooltip } from "@mui/material";
 import { use, useMemo, useState } from "react";
-import { ArrowBack } from "@mui/icons-material";
-import Link from "next/link";
 import { useConcept } from "@/hooks/use-concept";
 import { NodeView } from "@/components/node-view";
 import { useExercise } from "@/hooks/exercises/use-exercise";
@@ -28,8 +14,6 @@ import { formatRelative } from "date-fns";
 import Grid from "@mui/material/Grid2";
 import { useExerciseToStudy } from "@/hooks/exercises/use-exercise-to-study";
 import type { StudyResultType } from "@/models/study-result-type";
-import { BarChart } from "@mui/x-charts";
-import { useStudyProgress } from "@/hooks/exercises/use-study-progress";
 
 export default function StudyPage({
 	params,
@@ -58,123 +42,45 @@ export default function StudyPage({
 
 	return (
 		<>
-			<AppBar position="sticky">
-				<Toolbar>
-					<IconButton
-						size="large"
-						edge="start"
-						color="inherit"
-						aria-label="back"
-						sx={{ mr: 2 }}
-						component={Link}
-						href={`/concepts/${conceptId}`}
-					>
-						<ArrowBack />
-					</IconButton>
-					<Box
-						sx={{ flexGrow: 1, display: "flex", alignItems: "center", gap: 2 }}
-					>
-						<Typography variant="h6" component="h1">
-							Study {concept?.title}
-						</Typography>
-					</Box>
-				</Toolbar>
-			</AppBar>
-			<Container
-				sx={{
-					py: 4,
-				}}
-			>
-				<Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						<StudyPerformanceOverview conceptId={conceptId} />
-					</Grid>
-					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						{experience && (
-							<ExercisePerformanceOverview experience={experience} />
-						)}
-					</Grid>
-					<Grid size={12}>
-						{exercise?.root ? (
-							<Card>
-								<CardContent>
-									<NodeView
-										node={exercise.root}
-										context={{
-											isInteractive: true,
-											showSolution,
-											onShowSolution: () => setShowSolution(true),
-											onExerciseFailure: () => {
-												setStudyResultType("failure");
-												persistExerciseFailure({
-													userId: db.cloud.currentUserId,
-													exerciseId,
-												});
-											},
-											onExerciseSuccess: () => {
-												setStudyResultType("success");
-												persistExerciseSuccess({
-													userId: db.cloud.currentUserId,
-													exerciseId,
-												});
-											},
-											nextExercise,
-											studyResultType,
-											concept,
-										}}
-									/>
-								</CardContent>
-							</Card>
-						) : undefined}
-					</Grid>
-				</Grid>
-			</Container>
+			<Grid size={6} sx={{ alignItems: "stretch" }}>
+				{experience && <ExercisePerformanceOverview experience={experience} />}
+			</Grid>
+			<Grid size={12}>
+				{exercise?.root ? (
+					<Card>
+						<CardContent>
+							<NodeView
+								node={exercise.root}
+								context={{
+									isInteractive: true,
+									showSolution,
+									onShowSolution: () => setShowSolution(true),
+									onExerciseFailure: () => {
+										setStudyResultType("failure");
+										persistExerciseFailure({
+											userId: db.cloud.currentUserId,
+											exerciseId,
+										});
+									},
+									onExerciseSuccess: () => {
+										setStudyResultType("success");
+										persistExerciseSuccess({
+											userId: db.cloud.currentUserId,
+											exerciseId,
+										});
+									},
+									nextExercise,
+									studyResultType,
+									concept,
+								}}
+							/>
+						</CardContent>
+					</Card>
+				) : undefined}
+			</Grid>
 		</>
 	);
 }
-
-const StudyPerformanceOverview = ({ conceptId }: { conceptId: string }) => {
-	const dataset = useStudyProgress({ conceptId });
-	console.log(dataset);
-	return (
-		<Card sx={{ height: "100%" }}>
-			<CardHeader title="Study performance" />
-			<CardContent>
-				{dataset && (
-					<BarChart
-						xAxis={[
-							{
-								id: "barCategories",
-								dataKey: "correctStreak",
-								label: "correct streak",
-								scaleType: "band",
-							},
-						]}
-						yAxis={[
-							{
-								label: "exercise count",
-							},
-						]}
-						series={[
-							{
-								dataKey: "practiced",
-								stack: "exerciseCount",
-								label: "practiced today",
-							},
-							{
-								dataKey: "pending",
-								stack: "exerciseCount",
-								label: "not practiced today",
-							},
-						]}
-						dataset={dataset}
-						height={200}
-					/>
-				)}
-			</CardContent>
-		</Card>
-	);
-};
 
 const ExercisePerformanceOverview = ({
 	experience,
