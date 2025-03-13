@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import type { Concept } from "@/models/concept";
-import { NodeView } from "@/components/node-view";
+import { NodeView } from "@/components/nodes/node-view";
 import { ArrowBack } from "@mui/icons-material";
 
 export default function ConceptsPage() {

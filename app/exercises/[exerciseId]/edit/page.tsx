@@ -1,9 +1,9 @@
 "use client";
 
 import { ConceptsSelect } from "@/components/concepts/concepts-select";
-import { NodeEditor } from "@/components/node-editor";
-import { NodeSelection } from "@/components/node-selection";
-import { NodeView } from "@/components/node-view";
+import { NodeEditor } from "@/components/nodes/node-editor";
+import { NodeSelection } from "@/components/nodes/node-selection";
+import { NodeView } from "@/components/nodes/node-view";
 import type { Exercise } from "@/models/exercise";
 import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";

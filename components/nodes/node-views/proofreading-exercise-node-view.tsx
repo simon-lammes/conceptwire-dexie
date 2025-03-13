@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import type { NodeContext } from "@/models/node-context";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { diffWords } from "diff";
-import { NodeArrayView } from "@/components/node-array-view";
+import { NodeArrayView } from "@/components/nodes/node-array-view";
 
 export const ProofreadingExerciseNodeView = ({
 	node,

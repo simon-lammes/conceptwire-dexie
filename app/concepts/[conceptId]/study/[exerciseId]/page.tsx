@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { use, useMemo, useState } from "react";
 import { useConcept } from "@/hooks/use-concept";
-import { NodeView } from "@/components/node-view";
+import { NodeView } from "@/components/nodes/node-view";
 import { useExercise } from "@/hooks/exercises/use-exercise";
 import { persistExerciseFailure } from "@/utils/experiences/persist-exercise-failure";
 import { persistExerciseSuccess } from "@/utils/experiences/persist-exercise-success";

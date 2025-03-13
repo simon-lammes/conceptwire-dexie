@@ -4,7 +4,7 @@ import type { NodeContext } from "@/models/node-context";
 import Button from "@mui/material/Button";
 import { ExerciseFeedbackRow } from "@/components/exercises/exercise-feedback-row";
 import type { QuestionAnswerExerciseNode } from "@/models/nodes/question-answer-exercise-node";
-import { NodeArrayView } from "@/components/node-array-view";
+import { NodeArrayView } from "@/components/nodes/node-array-view";
 
 export const QuestionAnswerExerciseNodeView = ({
 	node,

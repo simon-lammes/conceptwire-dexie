@@ -3,7 +3,7 @@ import type {
 	SetExerciseNode,
 } from "@/models/nodes/set-exercise-node";
 import Typography from "@mui/material/Typography";
-import { NodeArrayEditor } from "@/components/node-array-editor";
+import { NodeArrayEditor } from "@/components/nodes/node-array-editor";
 import { Box, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import { Fragment } from "react";

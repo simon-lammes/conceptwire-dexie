@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { use, useId, useState } from "react";
 import type { Concept } from "@/models/concept";
-import { NodeArrayEditor } from "@/components/node-array-editor";
+import { NodeArrayEditor } from "@/components/nodes/node-array-editor";
 
 export default function ConceptEditorPage({
 	params,

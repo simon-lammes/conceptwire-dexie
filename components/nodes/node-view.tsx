@@ -1,10 +1,10 @@
-import { ImageView } from "@/components/node-views/image-view";
-import { MarkdownView } from "@/components/node-views/markdown-view";
-import { QuestionAnswerExerciseNodeView } from "@/components/node-views/question-answer-exercise-node-view";
+import { ImageView } from "@/components/nodes/node-views/image-view";
+import { MarkdownView } from "@/components/nodes/node-views/markdown-view";
+import { QuestionAnswerExerciseNodeView } from "@/components/nodes/node-views/question-answer-exercise-node-view";
 import type { Node } from "@/models/node";
 import type { NodeContext } from "@/models/node-context";
-import { ProofreadingExerciseNodeView } from "@/components/node-views/proofreading-exercise-node-view";
-import { SetExerciseNodeView } from "@/components/node-views/set-exercise-node-view";
+import { ProofreadingExerciseNodeView } from "@/components/nodes/node-views/proofreading-exercise-node-view";
+import { SetExerciseNodeView } from "@/components/nodes/node-views/set-exercise-node-view";
 
 export const NodeView = ({
 	node,

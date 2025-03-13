@@ -1,6 +1,6 @@
-import { NodeEditor } from "@/components/node-editor";
+import { NodeEditor } from "@/components/nodes/node-editor";
 import { contentNodeTypes, type Node } from "@/models/node";
-import { NodeSelection } from "@/components/node-selection";
+import { NodeSelection } from "@/components/nodes/node-selection";
 import { Box, type BoxProps } from "@mui/material";
 
 export const NodeArrayEditor = ({

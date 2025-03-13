@@ -1,4 +1,4 @@
-import { NodeView } from "@/components/node-view";
+import { NodeView } from "@/components/nodes/node-view";
 import type { Node } from "@/models/node";
 import type { NodeContext } from "@/models/node-context";
 

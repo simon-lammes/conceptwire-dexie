@@ -1,7 +1,7 @@
 import type { SetExerciseNode } from "@/models/nodes/set-exercise-node";
 import type { NodeContext } from "@/models/node-context";
 import { Box, Divider } from "@mui/material";
-import { NodeArrayView } from "@/components/node-array-view";
+import { NodeArrayView } from "@/components/nodes/node-array-view";
 import Button from "@mui/material/Button";
 import { ExerciseFeedbackRow } from "@/components/exercises/exercise-feedback-row";
 import { Fragment } from "react";
