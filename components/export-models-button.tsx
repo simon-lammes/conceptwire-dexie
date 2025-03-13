@@ -12,6 +12,8 @@ import { get, set } from "idb-keyval";
 import { useState, type MouseEvent, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 
+const exportRootDirectoryKey = "exportRootDirectoryKey";
+
 export const ExportModelsButton = () => {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -30,7 +32,7 @@ export const ExportModelsButton = () => {
 	>(undefined);
 
 	useEffect(() => {
-		get("exportRootDirectory").then((x) => setRootDirectory(x));
+		get(exportRootDirectoryKey).then((x) => setRootDirectory(x));
 	}, []);
 
 	return (
@@ -51,10 +53,11 @@ export const ExportModelsButton = () => {
 					<CardActionArea
 						onClick={async () => {
 							const directory = await showDirectoryPicker({
+								id: exportRootDirectoryKey,
 								mode: "readwrite",
 							});
 							setRootDirectory(directory);
-							await set("exportRootDirectory", directory);
+							await set(exportRootDirectoryKey, directory);
 						}}
 					>
 						<CardContent>
