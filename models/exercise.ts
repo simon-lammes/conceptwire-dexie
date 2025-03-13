@@ -1,6 +1,8 @@
 import type { Node } from "@/models/node";
 
-export interface Exercise {
+export type Exercise = {
 	id: string;
+	owner?: string;
+	realmId?: string;
 	root?: Node;
-}
+};

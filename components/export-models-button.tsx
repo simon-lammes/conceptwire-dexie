@@ -11,6 +11,8 @@ import {
 import { get, set } from "idb-keyval";
 import { useState, type MouseEvent, useEffect } from "react";
 import Typography from "@mui/material/Typography";
+import { db } from "@/utils/db";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 const exportRootDirectoryKey = "exportRootDirectoryKey";
 
@@ -76,7 +78,73 @@ export const ExportModelsButton = () => {
 				</Card>
 
 				<Box sx={{ p: 2 }}>
-					<Button fullWidth>Confirm</Button>
+					<Button
+						fullWidth
+						disabled={!rootDirectory}
+						onClick={async () => {
+							if (!rootDirectory) return;
+
+							const exercisesDirectory = await rootDirectory.getDirectoryHandle(
+								"exercises",
+								{ create: true },
+							);
+							await db.exercises.each(async (exercise) => {
+								const exerciseFile = await exercisesDirectory.getFileHandle(
+									`${exercise.id}.json`,
+									{ create: true },
+								);
+								const writable = await exerciseFile.createWritable();
+								await writable.write(
+									JSON.stringify(omit(exercise, ["owner", "realmId"]), null, 2),
+								);
+								await writable.close();
+							});
+
+							const conceptsDirectory = await rootDirectory.getDirectoryHandle(
+								"concepts",
+								{ create: true },
+							);
+							await db.concepts.each(async (concept) => {
+								const conceptFile = await conceptsDirectory.getFileHandle(
+									`${concept.id}.json`,
+									{ create: true },
+								);
+								const writable = await conceptFile.createWritable();
+								await writable.write(
+									JSON.stringify(omit(concept, ["owner", "realmId"]), null, 2),
+								);
+
+								await writable.close();
+							});
+
+							const exerciseConceptReferencesDirectory =
+								await rootDirectory.getDirectoryHandle(
+									"exercise-concept-references",
+									{ create: true },
+								);
+							await db.exerciseConceptReference.each(
+								async (exerciseConceptReference) => {
+									const referenceFile =
+										await exerciseConceptReferencesDirectory.getFileHandle(
+											`${exerciseConceptReference.exerciseId}-${exerciseConceptReference.conceptId}.json`,
+											{ create: true },
+										);
+									const writable = await referenceFile.createWritable();
+									await writable.write(
+										JSON.stringify(
+											omit(exerciseConceptReference, ["owner", "realmId"]),
+											null,
+											2,
+										),
+									);
+
+									await writable.close();
+								},
+							);
+						}}
+					>
+						Confirm
+					</Button>
 				</Box>
 			</Popover>
 		</>

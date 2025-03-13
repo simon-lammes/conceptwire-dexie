@@ -21,7 +21,6 @@ export default function ConceptDetailPage({
 	const concept = useConcept(conceptId);
 	const exerciseToStudy = useExerciseToStudy({
 		conceptId,
-		exerciseCooldownMillis: 10_000,
 	});
 	return (
 		<>
