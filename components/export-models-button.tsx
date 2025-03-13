@@ -13,6 +13,7 @@ import { useState, type MouseEvent, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import { db } from "@/utils/db";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { IosShare } from "@mui/icons-material";
 
 const exportRootDirectoryKey = "exportRootDirectoryKey";
 
@@ -39,7 +40,7 @@ export const ExportModelsButton = () => {
 
 	return (
 		<>
-			<Button variant="text" onClick={handleClick}>
+			<Button variant="text" onClick={handleClick} startIcon={<IosShare />}>
 				Export
 			</Button>
 			<Popover
