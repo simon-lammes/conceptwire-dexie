@@ -23,11 +23,11 @@ export default function StudyLayout({
 	params,
 	children,
 }: Readonly<{
-	params: Promise<{ conceptId: string }>;
+	params: Promise<{ conceptIdentifier: string; workspaceId: string }>;
 	children: ReactNode;
 }>) {
-	const { conceptId } = use(params);
-	const concept = useConcept(conceptId);
+	const { conceptIdentifier, workspaceId } = use(params);
+	const concept = useConcept(conceptIdentifier, workspaceId);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -39,7 +39,7 @@ export default function StudyLayout({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href={`/concepts/${conceptId}`}
+						href={`/concepts/${conceptIdentifier}`}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -59,7 +59,7 @@ export default function StudyLayout({
 			>
 				<Grid container spacing={3} sx={{ alignItems: "stretch" }}>
 					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						<StudyProgressOverview conceptId={conceptId} />
+						<StudyProgressOverview conceptId={conceptIdentifier} />
 					</Grid>
 					{children}
 				</Grid>

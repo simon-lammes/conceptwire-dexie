@@ -44,11 +44,12 @@ export default function WorkspaceDetailPage({
 						onRemove={async () => {
 							await db.transaction(
 								"rw",
-								[db.realms, db.workspaces],
+								[db.realms, db.workspaces, db.concepts3],
 								async () => {
 									const realmId = getTiedRealmId(workspaceId);
 									await db.realms.delete(realmId);
 									await db.workspaces.delete(workspaceId);
+									await db.concepts3.where({ realmId }).delete();
 								},
 							);
 							router.push("/workspaces");

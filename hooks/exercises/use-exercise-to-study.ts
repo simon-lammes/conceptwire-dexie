@@ -4,9 +4,9 @@ import type { Exercise } from "@/models/exercise";
 import type { Experience } from "@/models/experience";
 
 export const useExerciseToStudy = ({
-	conceptId,
+	conceptIdentifier,
 	excludedExerciseIds,
-}: { conceptId: string; excludedExerciseIds?: string[] }) => {
+}: { conceptIdentifier: string; excludedExerciseIds?: string[] }) => {
 	// For how long will an exercise not be shown again after being practiced?
 	// In the future, this value could be configurable.
 	const exerciseCooldownMillis = 10_000;
@@ -21,7 +21,7 @@ export const useExerciseToStudy = ({
 		);
 		const exerciseConceptReferences = await db.exerciseConceptReference
 			.where("conceptId")
-			.equals(conceptId)
+			.equals(conceptIdentifier)
 			.toArray();
 		const experiences = await db.experiences
 			.where("[userId+exerciseId]")
@@ -73,5 +73,5 @@ export const useExerciseToStudy = ({
 			exerciseToStudyExperience = experience;
 		}
 		return exerciseToStudy;
-	}, [conceptId, exerciseCooldownMillis, userId, excludedExerciseIds]);
+	}, [conceptIdentifier, exerciseCooldownMillis, userId, excludedExerciseIds]);
 };

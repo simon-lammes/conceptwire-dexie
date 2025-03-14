@@ -15,13 +15,14 @@ import { useExerciseToStudy } from "@/hooks/exercises/use-exercise-to-study";
 export default function ConceptDetailPage({
 	params,
 }: {
-	params: Promise<{ conceptId: string }>;
+	params: Promise<{ conceptIdentifier: string; workspaceId: string }>;
 }) {
-	const { conceptId } = use(params);
-	const concept = useConcept(conceptId);
+	const { conceptIdentifier, workspaceId } = use(params);
+	const concept = useConcept(conceptIdentifier, workspaceId);
 	const exerciseToStudy = useExerciseToStudy({
-		conceptId,
+		conceptIdentifier,
 	});
+	console.log(concept);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -44,7 +45,7 @@ export default function ConceptDetailPage({
 						<Button
 							color="inherit"
 							component={Link}
-							href={`/concepts/${conceptId}/study/${exerciseToStudy?.id}`}
+							href={`/concepts/${conceptIdentifier}/study/${exerciseToStudy?.id}`}
 							disabled={!exerciseToStudy}
 						>
 							Study
@@ -52,7 +53,7 @@ export default function ConceptDetailPage({
 						<Button
 							color="inherit"
 							component={Link}
-							href={`/concepts/${conceptId}/edit`}
+							href={`/concepts/${conceptIdentifier}/edit`}
 						>
 							Edit
 						</Button>

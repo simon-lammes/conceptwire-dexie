@@ -25,22 +25,23 @@ import { NodeArrayEditor } from "@/components/nodes/node-array-editor";
 export default function ConceptEditorPage({
 	params,
 }: {
-	params: Promise<{ conceptId: string }>;
+	params: Promise<{ conceptIdentifier: string; workspaceId: string }>;
 }) {
-	const { conceptId } = use(params);
+	const { conceptIdentifier, workspaceId } = use(params);
 	const router = useRouter();
 	const [concept, setConcept] = useState<Concept>({
-		id: conceptId,
+		identifier: conceptIdentifier,
+		workspaceId,
 		title: "",
 		descriptionNodes: [],
 	});
 	useEffect(() => {
-		db.concepts.get(conceptId).then((dbConcept) => {
+		db.concepts3.get(conceptIdentifier).then((dbConcept) => {
 			if (dbConcept) {
 				setConcept(dbConcept);
 			}
 		});
-	}, [conceptId]);
+	}, [conceptIdentifier]);
 
 	const onConceptChange = useCallback(async (newConcept: Concept) => {
 		setConcept(newConcept);
@@ -58,7 +59,7 @@ export default function ConceptEditorPage({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href={`/concepts/${conceptId}`}
+						href={`/concepts/${conceptIdentifier}`}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -69,12 +70,12 @@ export default function ConceptEditorPage({
 						onRemove={async () => {
 							await db.transaction(
 								"rw",
-								[db.concepts, db.exerciseConceptReference],
+								[db.concepts3, db.exerciseConceptReference],
 								async () => {
-									await db.concepts.delete(conceptId);
+									await db.concepts3.delete(conceptIdentifier);
 									await db.exerciseConceptReference
 										.where("conceptId")
-										.equals(conceptId)
+										.equals(conceptIdentifier)
 										.delete();
 								},
 							);
@@ -174,5 +175,5 @@ function MoreButton({ onRemove }: { onRemove: () => void }) {
 }
 
 const updateConceptInDb = debounce(async (updatedConcept: Concept) => {
-	db.concepts.put(updatedConcept);
+	db.concepts3.put(updatedConcept);
 }, 500);

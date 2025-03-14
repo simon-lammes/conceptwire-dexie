@@ -105,9 +105,9 @@ export const ExportModelsButton = () => {
 								"concepts",
 								{ create: true },
 							);
-							await db.concepts.each(async (concept) => {
+							await db.concepts3.each(async (concept) => {
 								const conceptFile = await conceptsDirectory.getFileHandle(
-									`${concept.id}.json`,
+									`${concept.identifier}.json`,
 									{ create: true },
 								);
 								const writable = await conceptFile.createWritable();

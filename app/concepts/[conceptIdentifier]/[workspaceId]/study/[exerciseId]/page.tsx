@@ -25,10 +25,14 @@ import type { StudyResultType } from "@/models/study-result-type";
 export default function StudyPage({
 	params,
 }: {
-	params: Promise<{ conceptId: string; exerciseId: string }>;
+	params: Promise<{
+		conceptIdentifier: string;
+		exerciseId: string;
+		workspaceId: string;
+	}>;
 }) {
-	const { conceptId, exerciseId } = use(params);
-	const concept = useConcept(conceptId);
+	const { conceptIdentifier, exerciseId, workspaceId } = use(params);
+	const concept = useConcept(conceptIdentifier, workspaceId);
 	const exercise = useExercise(exerciseId);
 	const [showSolution, setShowSolution] = useState(false);
 	const experience = useExperience(exerciseId);
@@ -39,7 +43,7 @@ export default function StudyPage({
 	}, [exerciseId]);
 
 	const nextExercise = useExerciseToStudy({
-		conceptId,
+		conceptIdentifier: conceptIdentifier,
 		excludedExerciseIds: excludedExerciseIdsForNextExercise,
 	});
 

@@ -1,7 +1,7 @@
 import type { Node } from "@/models/node";
 
 export type Concept = {
-	id: string;
+	identifier: string;
 	owner?: string;
 	realmId?: string;
 	workspaceId: string;

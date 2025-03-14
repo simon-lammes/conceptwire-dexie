@@ -16,20 +16,18 @@ import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import type { Concept } from "@/models/concept";
 import { NodeView } from "@/components/nodes/node-view";
 import { Add, ArrowBack, Check } from "@mui/icons-material";
 import { type MouseEvent, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { WorkspaceSelect } from "@/components/workspaces/workspace-select";
 import { getTiedRealmId } from "dexie-cloud-addon";
 
 export default function ConceptsPage() {
-	const router = useRouter();
-	const concepts = useLiveQuery(() => db.concepts.toArray(), []);
+	const concepts = useLiveQuery(() => db.concepts3.toArray(), []);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -54,7 +52,7 @@ export default function ConceptsPage() {
 			<Box sx={{ padding: 2 }}>
 				<Masonry columns={3} spacing={2}>
 					{concepts?.map((concept) => (
-						<ConceptCard key={concept.id} concept={concept} />
+						<ConceptCard key={concept.identifier} concept={concept} />
 					)) ?? []}
 				</Masonry>
 			</Box>
@@ -65,7 +63,10 @@ export default function ConceptsPage() {
 const ConceptCard = ({ concept }: { concept: Concept }) => {
 	return (
 		<Card>
-			<CardActionArea component={Link} href={`/concepts/${concept.id}`}>
+			<CardActionArea
+				component={Link}
+				href={`/concepts/${concept.identifier}/${concept.workspaceId}`}
+			>
 				<CardHeader title={concept.title} />
 				<CardContent>
 					{concept.descriptionNodes?.map((descriptionNode) => (
@@ -95,8 +96,12 @@ const CreateConceptButton = () => {
 
 	const open = Boolean(anchorEl);
 
-	const { register, handleSubmit } = useForm<CreateConceptInput>({
-		defaultValues: { workspaceId: undefined, title: "" },
+	const { register, handleSubmit, control } = useForm<CreateConceptInput>({
+		defaultValues: {
+			// Passing an empty string as a value to an input, will tell it to be a controller input - which is what we want.
+			workspaceId: "",
+			title: "",
+		},
 	});
 
 	return (
@@ -116,13 +121,24 @@ const CreateConceptButton = () => {
 				<form
 					onSubmit={handleSubmit(async ({ workspaceId, title }) => {
 						const realmId = getTiedRealmId(workspaceId);
-						const id = crypto.randomUUID();
-						db.concepts.put({ id, realmId, workspaceId, title });
+						const identifier = crypto.randomUUID();
+						await db.concepts3.put({ identifier, realmId, workspaceId, title });
+						console.log("do");
 					})}
 				>
 					<Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 						<Typography variant="h6">New concept</Typography>
-						<WorkspaceSelect {...register("workspaceId")} />
+						<Controller
+							control={control}
+							name="workspaceId"
+							render={({ field }) => (
+								<WorkspaceSelect
+									value={field.value}
+									onChange={(event) => field.onChange(event.target.value)}
+								/>
+							)}
+						/>
+
 						<TextField
 							autoFocus
 							required

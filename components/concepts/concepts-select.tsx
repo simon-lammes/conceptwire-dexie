@@ -16,18 +16,18 @@ export const ConceptsSelect = ({
 	selectedConceptIds: string[];
 	onSelectedConceptIdsChange: (selectedConcepts: string[]) => void;
 }) => {
-	const concepts = useLiveQuery(() => db.concepts.toArray(), []);
+	const concepts = useLiveQuery(() => db.concepts3.toArray(), []);
 	return (
 		<Autocomplete
 			multiple
 			id="tags-outlined"
-			options={concepts?.map((c) => c.id) ?? []}
+			options={concepts?.map((c) => c.identifier) ?? []}
 			value={selectedConceptIds}
 			onChange={(_, selectedConcepts) =>
 				onSelectedConceptIdsChange(selectedConcepts)
 			}
 			getOptionLabel={(option) =>
-				concepts?.find((x) => x.id === option)?.title ?? ""
+				concepts?.find((x) => x.identifier === option)?.title ?? ""
 			}
 			filterSelectedOptions
 			renderInput={(params) => (
