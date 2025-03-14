@@ -8,6 +8,7 @@ import {
 	CardContent,
 	CardHeader,
 	Popover,
+	TextField,
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -24,6 +25,7 @@ import { Add, ArrowBack, Check } from "@mui/icons-material";
 import { type MouseEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { WorkspaceSelect } from "@/components/workspaces/workspace-select";
+import { getTiedRealmId } from "dexie-cloud-addon";
 
 export default function ConceptsPage() {
 	const router = useRouter();
@@ -77,6 +79,7 @@ const ConceptCard = ({ concept }: { concept: Concept }) => {
 
 type CreateConceptInput = {
 	workspaceId: string;
+	title: string;
 };
 
 const CreateConceptButton = () => {
@@ -92,8 +95,8 @@ const CreateConceptButton = () => {
 
 	const open = Boolean(anchorEl);
 
-	const { register, handleSubmit, reset } = useForm<CreateConceptInput>({
-		defaultValues: { workspaceId: undefined },
+	const { register, handleSubmit } = useForm<CreateConceptInput>({
+		defaultValues: { workspaceId: undefined, title: "" },
 	});
 
 	return (
@@ -111,13 +114,26 @@ const CreateConceptButton = () => {
 				}}
 			>
 				<form
-					onSubmit={handleSubmit(async (data) => {
-						console.log(data);
+					onSubmit={handleSubmit(async ({ workspaceId, title }) => {
+						const realmId = getTiedRealmId(workspaceId);
+						const id = crypto.randomUUID();
+						db.concepts.put({ id, realmId, workspaceId, title });
 					})}
 				>
 					<Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 						<Typography variant="h6">New concept</Typography>
 						<WorkspaceSelect {...register("workspaceId")} />
+						<TextField
+							autoFocus
+							required
+							margin="dense"
+							id="name"
+							label="Title"
+							type="text"
+							fullWidth
+							variant="outlined"
+							{...register("title")}
+						/>
 
 						<Box>
 							<Button
