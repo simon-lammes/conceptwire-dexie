@@ -3,7 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import theme from "@/app/theme";
 import { AuthDialogManager } from "@/components/auth/auth-dialog-manager";
-import { ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
 const roboto = Roboto({
@@ -29,7 +29,7 @@ export default function RootLayout({
 				<AppRouterCacheProvider>
 					<ThemeProvider theme={theme}>
 						<AuthDialogManager />
-						{children}
+						<CssBaseline>{children}</CssBaseline>
 					</ThemeProvider>
 				</AppRouterCacheProvider>
 			</body>

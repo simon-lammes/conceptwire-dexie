@@ -1,9 +1,10 @@
-import { ImageNodeEditor } from "@/components/node-editors/image-node-editor";
-import { QuestionAnswerExerciseNodeEditor } from "@/components/node-editors/question-answer-exercise-node-editor";
+import { ImageNodeEditor } from "@/components/nodes/node-editors/image-node-editor";
+import { QuestionAnswerExerciseNodeEditor } from "@/components/nodes/node-editors/question-answer-exercise-node-editor";
 import type { Node } from "@/models/node";
 import Typography from "@mui/material/Typography";
 import { MarkdownNodeEditor } from "./node-editors/markdown-node-editor";
-import { ProofreadingExerciseNodeEditor } from "@/components/node-editors/proofreading-exercise-node-editor";
+import { ProofreadingExerciseNodeEditor } from "@/components/nodes/node-editors/proofreading-exercise-node-editor";
+import { SetExerciseNodeEditor } from "@/components/nodes/node-editors/set-exercise-node-editor";
 
 export const NodeEditor = ({
 	node,
@@ -45,6 +46,8 @@ export const NodeEditor = ({
 					onNodeChange={onNodeChange}
 				/>
 			);
+		case "setExercise":
+			return <SetExerciseNodeEditor node={node} onNodeChange={onNodeChange} />;
 		default:
 			return <Typography>unknown type</Typography>;
 	}

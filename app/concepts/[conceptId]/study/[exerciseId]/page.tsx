@@ -1,22 +1,16 @@
 "use client";
+
 import {
-	AppBar,
 	Avatar,
-	Box,
 	Card,
 	CardContent,
 	CardHeader,
-	Container,
-	IconButton,
-	Toolbar,
+	Stack,
 	Tooltip,
-	Typography,
 } from "@mui/material";
-import { use, useState } from "react";
-import { ArrowBack } from "@mui/icons-material";
-import Link from "next/link";
+import { use, useMemo, useState } from "react";
 import { useConcept } from "@/hooks/use-concept";
-import { NodeView } from "@/components/node-view";
+import { NodeView } from "@/components/nodes/node-view";
 import { useExercise } from "@/hooks/exercises/use-exercise";
 import { persistExerciseFailure } from "@/utils/experiences/persist-exercise-failure";
 import { persistExerciseSuccess } from "@/utils/experiences/persist-exercise-success";
@@ -25,6 +19,8 @@ import { useExperience } from "@/hooks/experiences/use-experience";
 import type { Experience } from "@/models/experience";
 import { formatRelative } from "date-fns";
 import Grid from "@mui/material/Grid2";
+import { useExerciseToStudy } from "@/hooks/exercises/use-exercise-to-study";
+import type { StudyResultType } from "@/models/study-result-type";
 
 export default function StudyPage({
 	params,
@@ -37,90 +33,72 @@ export default function StudyPage({
 	const [showSolution, setShowSolution] = useState(false);
 	const experience = useExperience(exerciseId);
 
+	// Stable references are required for Reacts dependency arrays to work as expected.
+	const excludedExerciseIdsForNextExercise = useMemo(() => {
+		return [exerciseId];
+	}, [exerciseId]);
+
+	const nextExercise = useExerciseToStudy({
+		conceptId,
+		excludedExerciseIds: excludedExerciseIdsForNextExercise,
+	});
+
+	const [studyResultType, setStudyResultType] = useState<
+		StudyResultType | undefined
+	>(undefined);
+
 	return (
 		<>
-			<AppBar position="sticky">
-				<Toolbar>
-					<IconButton
-						size="large"
-						edge="start"
-						color="inherit"
-						aria-label="back"
-						sx={{ mr: 2 }}
-						component={Link}
-						href={`/concepts/${conceptId}`}
-					>
-						<ArrowBack />
-					</IconButton>
-					<Box
-						sx={{ flexGrow: 1, display: "flex", alignItems: "center", gap: 2 }}
-					>
-						<Typography variant="h6" component="h1">
-							Study {concept?.title}
-						</Typography>
-					</Box>
-				</Toolbar>
-			</AppBar>
-			<Container
-				sx={{
-					py: 4,
-				}}
-			>
-				<Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						<StudyPerformanceOverview />
-					</Grid>
-					<Grid size={6} sx={{ alignItems: "stretch" }}>
-						{experience && (
-							<ExercisePerformanceOverview experience={experience} />
-						)}
-					</Grid>
-					<Grid size={12}>
-						{exercise?.root ? (
-							<Card>
-								<CardContent>
-									<NodeView
-										node={exercise.root}
-										context={{
-											isInteractive: true,
-											showSolution,
-											onShowSolution: () => setShowSolution(true),
-											onExerciseFailure: () =>
-												persistExerciseFailure({
-													userId: db.cloud.currentUserId,
-													exerciseId,
-												}),
-											onExerciseSuccess: () =>
-												persistExerciseSuccess({
-													userId: db.cloud.currentUserId,
-													exerciseId,
-												}),
-										}}
-									/>
-								</CardContent>
-							</Card>
-						) : undefined}
-					</Grid>
-				</Grid>
-			</Container>
+			<Grid size={6}>
+				<Stack spacing={3} sx={{ height: "100%" }}>
+					{experience && (
+						<ExercisePerformanceOverview experience={experience} />
+					)}
+					<StudyTimeline />
+				</Stack>
+			</Grid>
+			<Grid size={12}>
+				{exercise?.root ? (
+					<Card>
+						<CardContent>
+							<NodeView
+								node={exercise.root}
+								context={{
+									isInteractive: true,
+									showSolution,
+									onShowSolution: () => setShowSolution(true),
+									onExerciseFailure: () => {
+										setStudyResultType("failure");
+										persistExerciseFailure({
+											userId: db.cloud.currentUserId,
+											exerciseId,
+										});
+									},
+									onExerciseSuccess: () => {
+										setStudyResultType("success");
+										persistExerciseSuccess({
+											userId: db.cloud.currentUserId,
+											exerciseId,
+										});
+									},
+									nextExercise,
+									studyResultType,
+									concept,
+								}}
+							/>
+						</CardContent>
+					</Card>
+				) : undefined}
+			</Grid>
 		</>
 	);
 }
-
-const StudyPerformanceOverview = () => {
-	return (
-		<Card sx={{ height: "100%" }}>
-			<CardHeader title="Study performance" />
-			<CardContent>todo</CardContent>
-		</Card>
-	);
-};
 
 const ExercisePerformanceOverview = ({
 	experience,
 }: { experience: Experience }) => {
 	return (
-		<Card sx={{ height: "100%" }}>
+		<Card>
 			<CardHeader
 				title="Exercise performance"
 				subheader={`Last studied ${formatRelative(experience.lastPracticedAt, new Date())}`}
@@ -132,6 +110,19 @@ const ExercisePerformanceOverview = ({
 					</Tooltip>
 				}
 			/>
+		</Card>
+	);
+};
+
+const StudyTimeline = () => {
+	return (
+		<Card sx={{ flexGrow: 1 }}>
+			<CardHeader title="Timeline" />
+			<CardContent>
+				This could show a history of the result of previous exercises, letting
+				you jump back to them. It could also show you how many exercises are
+				upcoming.
+			</CardContent>
 		</Card>
 	);
 };

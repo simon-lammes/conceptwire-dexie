@@ -2,7 +2,7 @@ import { Box, TextField } from "@mui/material";
 import type { Node } from "@/models/node";
 import type { ProofreadingExerciseNode } from "@/models/nodes/proofreading-exercise-node";
 import Typography from "@mui/material/Typography";
-import { NodeArrayEditor } from "@/components/node-array-editor";
+import { NodeArrayEditor } from "@/components/nodes/node-array-editor";
 
 export const ProofreadingExerciseNodeEditor = ({
 	node,

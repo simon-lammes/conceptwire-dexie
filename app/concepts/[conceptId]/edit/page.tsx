@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { use, useId, useState } from "react";
 import type { Concept } from "@/models/concept";
-import { NodeArrayEditor } from "@/components/node-array-editor";
+import { NodeArrayEditor } from "@/components/nodes/node-array-editor";
 
 export default function ConceptEditorPage({
 	params,
@@ -67,7 +67,17 @@ export default function ConceptEditorPage({
 					</Typography>
 					<MoreButton
 						onRemove={async () => {
-							await db.concepts.delete(conceptId);
+							await db.transaction(
+								"rw",
+								[db.concepts, db.exerciseConceptReference],
+								async () => {
+									await db.concepts.delete(conceptId);
+									await db.exerciseConceptReference
+										.where("conceptId")
+										.equals(conceptId)
+										.delete();
+								},
+							);
 							router.push("/concepts");
 						}}
 					/>

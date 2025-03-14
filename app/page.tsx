@@ -9,6 +9,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
+import { ExportModelsButton } from "@/components/export-models-button";
 
 export default function Home() {
 	return (
@@ -18,6 +19,7 @@ export default function Home() {
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Conceptwire
 					</Typography>
+					<ExportModelsButton />
 				</Toolbar>
 			</AppBar>
 			<Container>

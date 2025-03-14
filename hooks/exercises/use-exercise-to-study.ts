@@ -5,32 +5,48 @@ import type { Experience } from "@/models/experience";
 
 export const useExerciseToStudy = ({
 	conceptId,
-	exerciseCooldownMillis,
-}: { conceptId: string; exerciseCooldownMillis: number }) => {
+	excludedExerciseIds,
+}: { conceptId: string; excludedExerciseIds?: string[] }) => {
+	// For how long will an exercise not be shown again after being practiced?
+	// In the future, this value could be configurable.
+	const exerciseCooldownMillis = 10_000;
+
 	const userId = db.cloud.currentUserId;
+
 	return useLiveQuery(async () => {
 		if (userId === "unauthorized") return;
 
 		const maxLastPracticedAt = new Date(
 			new Date().getTime() - exerciseCooldownMillis,
 		);
-		const exercises = await db.exercises
-			.where("conceptIds")
+		const exerciseConceptReferences = await db.exerciseConceptReference
+			.where("conceptId")
 			.equals(conceptId)
 			.toArray();
 		const experiences = await db.experiences
 			.where("[userId+exerciseId]")
-			.anyOf(exercises.map((exercise) => [userId, exercise.id]))
+			.anyOf(
+				exerciseConceptReferences.map((reference) => [
+					userId,
+					reference.exerciseId,
+				]),
+			)
 			.toArray();
 
 		let exerciseToStudy: Exercise | undefined = undefined;
 		let exerciseToStudyExperience: Experience | undefined = undefined;
 
 		// Iterate over exercises to find the best exercise to study.
-		for (const exercise of exercises) {
-			const experience = experiences.find((x) => x.exerciseId === exercise.id);
+		for (const exerciseConceptReference of exerciseConceptReferences) {
+			const experience = experiences.find(
+				(x) => x.exerciseId === exerciseConceptReference.exerciseId,
+			);
 
-			// Don't take the exercise if it was practiced to recently.
+			// Don't take the exercise if it belongs to the "excluded" exercises.
+			if (excludedExerciseIds?.includes(exerciseConceptReference.exerciseId))
+				continue;
+
+			// Don't take the exercise if it was practiced too recently.
 			if (experience && experience.lastPracticedAt > maxLastPracticedAt)
 				continue;
 
@@ -51,9 +67,11 @@ export const useExerciseToStudy = ({
 			)
 				continue;
 
-			exerciseToStudy = exercise;
+			exerciseToStudy = await db.exercises.get(
+				exerciseConceptReference.exerciseId,
+			);
 			exerciseToStudyExperience = experience;
 		}
 		return exerciseToStudy;
-	}, [conceptId, exerciseCooldownMillis, userId]);
+	}, [conceptId, exerciseCooldownMillis, userId, excludedExerciseIds]);
 };

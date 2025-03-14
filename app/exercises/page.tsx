@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import type { Exercise } from "@/models/exercise";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
-import { NodeView } from "@/components/node-view";
+import { NodeView } from "@/components/nodes/node-view";
 import { ArrowBack } from "@mui/icons-material";
 
 export default function ExercisesPage() {

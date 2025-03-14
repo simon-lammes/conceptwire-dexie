@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import type { NodeContext } from "@/models/node-context";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { diffWords } from "diff";
-import { NodeView } from "@/components/node-view";
+import { NodeArrayView } from "@/components/nodes/node-array-view";
 
 export const ProofreadingExerciseNodeView = ({
 	node,
@@ -75,13 +75,7 @@ export const ProofreadingExerciseNodeView = ({
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Explanation
 							</Typography>
-							{node.explanationNodes?.map((explanationNode) => (
-								<NodeView
-									key={explanationNode.id}
-									node={explanationNode}
-									context={context}
-								/>
-							))}
+							<NodeArrayView nodes={node.explanationNodes} context={context} />
 						</>
 					)}
 				</>
