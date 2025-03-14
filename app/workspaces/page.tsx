@@ -15,16 +15,15 @@ import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useLiveQuery } from "dexie-react-hooks";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import { Add, ArrowBack, Check } from "@mui/icons-material";
 import type { Workspace } from "@/models/workspace";
 import { type MouseEvent, useState } from "react";
-import {} from "idb-keyval";
+import { useForm } from "react-hook-form";
+import { getTiedRealmId } from "dexie-cloud-addon";
 
 export default function WorkspacesPage() {
-	const router = useRouter();
 	const workspaces = useLiveQuery(() => db.workspaces.toArray(), []);
 	return (
 		<>
@@ -62,10 +61,14 @@ const WorkspaceCard = ({ workspace }: { workspace: Workspace }) => {
 	return (
 		<Card>
 			<CardActionArea component={Link} href={`/workspaces/${workspace.id}`}>
-				<CardContent>{workspace.id}</CardContent>
+				<CardContent>{workspace.name}</CardContent>
 			</CardActionArea>
 		</Card>
 	);
+};
+
+type CreateWorkspaceInputs = {
+	name: string;
 };
 
 const CreateWorkspaceButton = () => {
@@ -81,6 +84,10 @@ const CreateWorkspaceButton = () => {
 
 	const open = Boolean(anchorEl);
 
+	const { register, handleSubmit, reset } = useForm<CreateWorkspaceInputs>({
+		defaultValues: { name: "" },
+	});
+
 	return (
 		<>
 			<Button variant="text" onClick={handleClick} startIcon={<Add />}>
@@ -95,16 +102,35 @@ const CreateWorkspaceButton = () => {
 					horizontal: "left",
 				}}
 			>
-				<Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-					<Typography variant="h6">New workspace</Typography>
-					<TextField label="Name" variant="outlined" />
+				<form
+					onSubmit={handleSubmit(async ({ name }) => {
+						reset();
+						const id = crypto.randomUUID();
+						await db.transaction("rw", [db.realms, db.workspaces], async () => {
+							const realmId = getTiedRealmId(id);
+							await db.realms.put({
+								realmId,
+								name: "",
+							});
+							await db.workspaces.put({ id, name, realmId });
+						});
+					})}
+				>
+					<Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+						<Typography variant="h6">New workspace</Typography>
+						<TextField label="Name" variant="outlined" {...register("name")} />
 
-					<Box>
-						<Button startIcon={<Check />} sx={{ display: "flex" }}>
-							Create
-						</Button>
+						<Box>
+							<Button
+								type="submit"
+								startIcon={<Check />}
+								sx={{ display: "flex" }}
+							>
+								Create
+							</Button>
+						</Box>
 					</Box>
-				</Box>
+				</form>
 			</Popover>
 		</>
 	);

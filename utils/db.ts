@@ -20,6 +20,12 @@ export const db = new Dexie("conceptwire", {
 };
 
 db.version(1).stores({
+	// Access Control tables
+	// Optionally, index things like "email".
+	realms: "@realmId",
+	members: "@id",
+	roles: "[realmId+name]",
+
 	exercises: "id, *conceptIds",
 	concepts: "id",
 	experiences: "[userId+exerciseId]",
