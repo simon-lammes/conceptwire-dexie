@@ -43,6 +43,11 @@ export default function Home() {
 							<CardHeader title="Exercises" />
 						</CardActionArea>
 					</Card>
+					<Card>
+						<CardActionArea component={Link} href="/workspaces">
+							<CardHeader title="Workspaces" />
+						</CardActionArea>
+					</Card>
 				</Box>
 			</Container>
 		</>
