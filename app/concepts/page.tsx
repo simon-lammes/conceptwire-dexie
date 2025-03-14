@@ -7,6 +7,7 @@ import {
 	CardActionArea,
 	CardContent,
 	CardHeader,
+	Popover,
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -19,7 +20,10 @@ import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import type { Concept } from "@/models/concept";
 import { NodeView } from "@/components/nodes/node-view";
-import { ArrowBack } from "@mui/icons-material";
+import { Add, ArrowBack, Check } from "@mui/icons-material";
+import { type MouseEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { WorkspaceSelect } from "@/components/workspaces/workspace-select";
 
 export default function ConceptsPage() {
 	const router = useRouter();
@@ -42,15 +46,7 @@ export default function ConceptsPage() {
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Concepts
 					</Typography>
-					<Button
-						color="inherit"
-						onClick={() => {
-							const newConceptId = crypto.randomUUID();
-							router.push(`/concepts/${newConceptId}/edit`);
-						}}
-					>
-						Create
-					</Button>
+					<CreateConceptButton />
 				</Toolbar>
 			</AppBar>
 			<Box sx={{ padding: 2 }}>
@@ -76,5 +72,65 @@ const ConceptCard = ({ concept }: { concept: Concept }) => {
 				</CardContent>
 			</CardActionArea>
 		</Card>
+	);
+};
+
+type CreateConceptInput = {
+	workspaceId: string;
+};
+
+const CreateConceptButton = () => {
+	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
+	const open = Boolean(anchorEl);
+
+	const { register, handleSubmit, reset } = useForm<CreateConceptInput>({
+		defaultValues: { workspaceId: undefined },
+	});
+
+	return (
+		<>
+			<Button variant="text" onClick={handleClick} startIcon={<Add />}>
+				Create
+			</Button>
+			<Popover
+				open={open}
+				anchorEl={anchorEl}
+				onClose={handleClose}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: "left",
+				}}
+			>
+				<form
+					onSubmit={handleSubmit(async (data) => {
+						console.log(data);
+					})}
+				>
+					<Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+						<Typography variant="h6">New concept</Typography>
+						<WorkspaceSelect {...register("workspaceId")} />
+
+						<Box>
+							<Button
+								type="submit"
+								startIcon={<Check />}
+								sx={{ display: "flex" }}
+							>
+								Create
+							</Button>
+						</Box>
+					</Box>
+				</form>
+			</Popover>
+		</>
 	);
 };
