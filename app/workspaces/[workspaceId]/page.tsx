@@ -12,8 +12,11 @@ import {
 	CardActionArea,
 	CardHeader,
 	Container,
+	List,
+	ListItem,
 	ListItemButton,
 	ListItemText,
+	Paper,
 	Popover,
 } from "@mui/material";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -22,6 +25,7 @@ import type React from "react";
 import { use, useId, useState } from "react";
 import { getTiedRealmId } from "dexie-cloud-addon";
 import { useRouter } from "next/navigation";
+import { formatRelative } from "date-fns";
 
 export default function WorkspaceDetailPage({
 	params,
@@ -94,6 +98,12 @@ export default function WorkspaceDetailPage({
 						</CardActionArea>
 					</Card>
 				</Box>
+
+				<Typography variant="h2" component="h2" mt={4} mb={1}>
+					Members
+				</Typography>
+
+				<MemberList workspaceId={workspaceId} />
 			</Container>
 		</>
 	);
@@ -139,5 +149,31 @@ function MoreButton({ onRemove }: { onRemove: () => void }) {
 				</ListItemButton>
 			</Popover>
 		</div>
+	);
+}
+
+function MemberList({ workspaceId }: { workspaceId: string }) {
+	const realmId = getTiedRealmId(workspaceId);
+	const members = useLiveQuery(() => db.members.where({ realmId }).toArray());
+	console.log(members);
+	return (
+		<Paper>
+			<List>
+				{members?.map((member) => (
+					<ListItem key={member.id} disablePadding>
+						<ListItemButton>
+							<ListItemText
+								primary={member.userId}
+								secondary={
+									member.accepted
+										? `since ${formatRelative(member.accepted, new Date())}`
+										: undefined
+								}
+							/>
+						</ListItemButton>
+					</ListItem>
+				))}
+			</List>
+		</Paper>
 	);
 }
