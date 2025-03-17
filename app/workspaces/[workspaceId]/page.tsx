@@ -4,10 +4,11 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Link from "next/link";
-import { ArrowBack, MoreVert } from "@mui/icons-material";
+import { Add, ArrowBack, MoreVert, Send } from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import {
 	Box,
+	Button,
 	Card,
 	CardActionArea,
 	CardHeader,
@@ -18,10 +19,12 @@ import {
 	ListItemText,
 	Paper,
 	Popover,
+	TextField,
 } from "@mui/material";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/utils/db";
 import type React from "react";
+import type { MouseEvent } from "react";
 import { use, useId, useState } from "react";
 import { getTiedRealmId } from "dexie-cloud-addon";
 import { useRouter } from "next/navigation";
@@ -99,9 +102,18 @@ export default function WorkspaceDetailPage({
 					</Card>
 				</Box>
 
-				<Typography variant="h2" component="h2" mt={4} mb={1}>
-					Members
-				</Typography>
+				<Box sx={{ display: "flex", gap: 2, alignItems: "baseline" }}>
+					<Typography
+						variant="h2"
+						component="h2"
+						mt={4}
+						mb={1}
+						sx={{ flexGrow: 1 }}
+					>
+						Members
+					</Typography>
+					<InviteMemberButton />
+				</Box>
 
 				<MemberList workspaceId={workspaceId} />
 			</Container>
@@ -155,7 +167,6 @@ function MoreButton({ onRemove }: { onRemove: () => void }) {
 function MemberList({ workspaceId }: { workspaceId: string }) {
 	const realmId = getTiedRealmId(workspaceId);
 	const members = useLiveQuery(() => db.members.where({ realmId }).toArray());
-	console.log(members);
 	return (
 		<Paper>
 			<List>
@@ -175,5 +186,43 @@ function MemberList({ workspaceId }: { workspaceId: string }) {
 				))}
 			</List>
 		</Paper>
+	);
+}
+
+function InviteMemberButton() {
+	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+	const open = Boolean(anchorEl);
+
+	return (
+		<>
+			<Button
+				onClick={(event: MouseEvent<HTMLButtonElement>) => {
+					setAnchorEl(event.currentTarget);
+				}}
+				startIcon={<Add />}
+			>
+				Invite
+			</Button>
+			<Popover
+				open={open}
+				anchorEl={anchorEl}
+				onClose={() => {
+					setAnchorEl(null);
+				}}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: "left",
+				}}
+			>
+				<Box
+					sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}
+				>
+					<TextField label="E-mail" />
+
+					<Button endIcon={<Send />}>send invitation</Button>
+				</Box>
+			</Popover>
+		</>
 	);
 }
