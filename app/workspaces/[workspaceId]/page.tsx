@@ -29,6 +29,7 @@ import { use, useId, useState } from "react";
 import { getTiedRealmId } from "dexie-cloud-addon";
 import { useRouter } from "next/navigation";
 import { formatRelative } from "date-fns";
+import { useForm } from "react-hook-form";
 
 export default function WorkspaceDetailPage({
 	params,
@@ -38,6 +39,7 @@ export default function WorkspaceDetailPage({
 	const { workspaceId } = use(params);
 	const router = useRouter();
 	const workspace = useLiveQuery(() => db.workspaces.get(workspaceId));
+	const realmId = getTiedRealmId(workspaceId);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -112,10 +114,10 @@ export default function WorkspaceDetailPage({
 					>
 						Members
 					</Typography>
-					<InviteMemberButton />
+					<InviteMemberButton realmId={realmId} />
 				</Box>
 
-				<MemberList workspaceId={workspaceId} />
+				<MemberList realmId={realmId} />
 			</Container>
 		</>
 	);
@@ -164,8 +166,7 @@ function MoreButton({ onRemove }: { onRemove: () => void }) {
 	);
 }
 
-function MemberList({ workspaceId }: { workspaceId: string }) {
-	const realmId = getTiedRealmId(workspaceId);
+function MemberList({ realmId }: { realmId: string }) {
 	const members = useLiveQuery(() => db.members.where({ realmId }).toArray());
 	return (
 		<Paper>
@@ -174,7 +175,7 @@ function MemberList({ workspaceId }: { workspaceId: string }) {
 					<ListItem key={member.id} disablePadding>
 						<ListItemButton>
 							<ListItemText
-								primary={member.userId}
+								primary={member.name ?? member.email ?? member.id}
 								secondary={
 									member.accepted
 										? `since ${formatRelative(member.accepted, new Date())}`
@@ -189,10 +190,16 @@ function MemberList({ workspaceId }: { workspaceId: string }) {
 	);
 }
 
-function InviteMemberButton() {
+type InviteMemberInputs = { email: string; name: string };
+
+function InviteMemberButton({ realmId }: { realmId: string }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
 	const open = Boolean(anchorEl);
+
+	const { register, handleSubmit } = useForm<InviteMemberInputs>({
+		defaultValues: { email: "", name: "" },
+	});
 
 	return (
 		<>
@@ -215,13 +222,36 @@ function InviteMemberButton() {
 					horizontal: "left",
 				}}
 			>
-				<Box
-					sx={{ padding: 2, display: "flex", flexDirection: "column", gap: 2 }}
+				<form
+					onSubmit={handleSubmit(async ({ email, name }) => {
+						await db.members.add({
+							realmId,
+							email,
+							name,
+							invite: true,
+							permissions: {
+								manage: "*",
+							},
+						});
+					})}
 				>
-					<TextField label="E-mail" />
+					<Box
+						sx={{
+							padding: 2,
+							display: "flex",
+							flexDirection: "column",
+							gap: 2,
+						}}
+					>
+						<TextField label="Name" {...register("name")} />
 
-					<Button endIcon={<Send />}>send invitation</Button>
-				</Box>
+						<TextField label="E-mail" {...register("email")} />
+
+						<Button type="submit" endIcon={<Send />}>
+							send invitation
+						</Button>
+					</Box>
+				</form>
 			</Popover>
 		</>
 	);
