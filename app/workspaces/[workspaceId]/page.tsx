@@ -179,7 +179,9 @@ function MemberList({ realmId }: { realmId: string }) {
 								secondary={
 									member.accepted
 										? `since ${formatRelative(member.accepted, new Date())}`
-										: undefined
+										: member.invitedDate
+											? `invited ${formatRelative(member.invitedDate, new Date())}`
+											: undefined
 								}
 							/>
 						</ListItemButton>
