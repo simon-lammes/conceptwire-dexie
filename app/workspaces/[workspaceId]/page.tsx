@@ -4,7 +4,14 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Link from "next/link";
-import { Add, ArrowBack, MoreVert, Send } from "@mui/icons-material";
+import {
+	Add,
+	ArrowBack,
+	Check,
+	Email,
+	MoreVert,
+	Send,
+} from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import {
 	Box,
@@ -12,13 +19,19 @@ import {
 	Card,
 	CardActionArea,
 	CardHeader,
+	Chip,
 	Container,
+	FormControl,
+	InputLabel,
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemIcon,
 	ListItemText,
+	MenuItem,
 	Paper,
 	Popover,
+	Select,
 	TextField,
 } from "@mui/material";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -29,7 +42,7 @@ import { use, useId, useState } from "react";
 import { getTiedRealmId } from "dexie-cloud-addon";
 import { useRouter } from "next/navigation";
 import { formatRelative } from "date-fns";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export default function WorkspaceDetailPage({
 	params,
@@ -174,6 +187,9 @@ function MemberList({ realmId }: { realmId: string }) {
 				{members?.map((member) => (
 					<ListItem key={member.id} disablePadding>
 						<ListItemButton>
+							<ListItemIcon>
+								{member.accepted ? <Check /> : <Email />}
+							</ListItemIcon>
 							<ListItemText
 								primary={member.name ?? member.email ?? member.id}
 								secondary={
@@ -184,6 +200,7 @@ function MemberList({ realmId }: { realmId: string }) {
 											: undefined
 								}
 							/>
+							<Chip label={member.permissions?.manage ? "Admin" : "Viewer"} />
 						</ListItemButton>
 					</ListItem>
 				))}
@@ -192,15 +209,19 @@ function MemberList({ realmId }: { realmId: string }) {
 	);
 }
 
-type InviteMemberInputs = { email: string; name: string };
+type InviteMemberInputs = {
+	email: string;
+	name: string;
+	role: "admin" | "viewer";
+};
 
 function InviteMemberButton({ realmId }: { realmId: string }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
 	const open = Boolean(anchorEl);
 
-	const { register, handleSubmit } = useForm<InviteMemberInputs>({
-		defaultValues: { email: "", name: "" },
+	const { register, handleSubmit, control } = useForm<InviteMemberInputs>({
+		defaultValues: { email: "", name: "", role: "viewer" },
 	});
 
 	return (
@@ -225,14 +246,14 @@ function InviteMemberButton({ realmId }: { realmId: string }) {
 				}}
 			>
 				<form
-					onSubmit={handleSubmit(async ({ email, name }) => {
+					onSubmit={handleSubmit(async ({ email, name, role }) => {
 						await db.members.add({
 							realmId,
 							email,
 							name,
 							invite: true,
 							permissions: {
-								manage: "*",
+								manage: role === "admin" ? "*" : undefined,
 							},
 						});
 					})}
@@ -248,6 +269,20 @@ function InviteMemberButton({ realmId }: { realmId: string }) {
 						<TextField label="Name" {...register("name")} />
 
 						<TextField label="E-mail" {...register("email")} />
+
+						<Controller
+							control={control}
+							render={({ field: { value, onChange } }) => (
+								<FormControl fullWidth>
+									<InputLabel>Role</InputLabel>
+									<Select label="Role" value={value} onChange={onChange}>
+										<MenuItem value="viewer">Viewer</MenuItem>
+										<MenuItem value="admin">Admin</MenuItem>
+									</Select>
+								</FormControl>
+							)}
+							name="role"
+						/>
 
 						<Button type="submit" endIcon={<Send />}>
 							send invitation
