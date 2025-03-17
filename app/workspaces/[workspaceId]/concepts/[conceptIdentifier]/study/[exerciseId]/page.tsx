@@ -88,6 +88,7 @@ export default function StudyPage({
 									nextExercise,
 									studyResultType,
 									concept,
+									workspaceId,
 								}}
 							/>
 						</CardContent>

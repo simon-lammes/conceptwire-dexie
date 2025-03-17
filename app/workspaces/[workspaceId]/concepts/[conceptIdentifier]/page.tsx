@@ -34,7 +34,7 @@ export default function ConceptDetailPage({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href="/concepts"
+						href={`/workspaces/${workspaceId}/concepts`}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -45,7 +45,7 @@ export default function ConceptDetailPage({
 						<Button
 							color="inherit"
 							component={Link}
-							href={`/concepts/${conceptIdentifier}/study/${exerciseToStudy?.id}`}
+							href={`/workspaces/${workspaceId}/concepts/${conceptIdentifier}/study/${exerciseToStudy?.identifier}`}
 							disabled={!exerciseToStudy}
 						>
 							Study
@@ -53,7 +53,7 @@ export default function ConceptDetailPage({
 						<Button
 							color="inherit"
 							component={Link}
-							href={`/concepts/${conceptIdentifier}/edit`}
+							href={`/workspaces/${workspaceId}/concepts/${conceptIdentifier}/edit`}
 						>
 							Edit
 						</Button>

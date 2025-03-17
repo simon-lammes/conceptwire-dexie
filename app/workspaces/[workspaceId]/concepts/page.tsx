@@ -21,12 +21,17 @@ import { Masonry } from "@mui/lab";
 import type { Concept } from "@/models/concept";
 import { NodeView } from "@/components/nodes/node-view";
 import { Add, ArrowBack, Check } from "@mui/icons-material";
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent, use, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { WorkspaceSelect } from "@/components/workspaces/workspace-select";
 import { getTiedRealmId } from "dexie-cloud-addon";
 
-export default function ConceptsPage() {
+export default function ConceptsPage({
+	params,
+}: {
+	params: Promise<{ workspaceId: string }>;
+}) {
+	const { workspaceId } = use(params);
 	const concepts = useLiveQuery(() => db.concepts3.toArray(), []);
 	return (
 		<>
@@ -39,7 +44,7 @@ export default function ConceptsPage() {
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href="/"
+						href={`/workspaces/${workspaceId}`}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -52,7 +57,11 @@ export default function ConceptsPage() {
 			<Box sx={{ padding: 2 }}>
 				<Masonry columns={3} spacing={2}>
 					{concepts?.map((concept) => (
-						<ConceptCard key={concept.identifier} concept={concept} />
+						<ConceptCard
+							key={concept.identifier}
+							concept={concept}
+							workspaceId={workspaceId}
+						/>
 					)) ?? []}
 				</Masonry>
 			</Box>
@@ -60,12 +69,15 @@ export default function ConceptsPage() {
 	);
 }
 
-const ConceptCard = ({ concept }: { concept: Concept }) => {
+const ConceptCard = ({
+	concept,
+	workspaceId,
+}: { concept: Concept; workspaceId: string }) => {
 	return (
 		<Card>
 			<CardActionArea
 				component={Link}
-				href={`/concepts/${concept.identifier}/${concept.workspaceId}`}
+				href={`/workspaces/${workspaceId}/concepts/${concept.identifier}`}
 			>
 				<CardHeader title={concept.title} />
 				<CardContent>

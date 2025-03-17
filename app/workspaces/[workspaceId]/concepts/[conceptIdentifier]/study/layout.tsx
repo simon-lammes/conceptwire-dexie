@@ -39,7 +39,7 @@ export default function StudyLayout({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href={`/concepts/${conceptIdentifier}`}
+						href={`/workspaces/${workspaceId}/concepts/${conceptIdentifier}`}
 					>
 						<ArrowBack />
 					</IconButton>

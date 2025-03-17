@@ -33,23 +33,27 @@ import { useConceptReferencesOfExercise } from "@/hooks/exercise-concept-referen
 export default function ExerciseEditorPage({
 	params,
 }: {
-	params: Promise<{ exerciseId: string }>;
+	params: Promise<{ workspaceId: string; exerciseIdentifier: string }>;
 }) {
-	const { exerciseId } = use(params);
+	const { exerciseIdentifier, workspaceId } = use(params);
 	const router = useRouter();
 
 	const [exercise, setExercise] = useState<Exercise | undefined>(undefined);
 
 	// Load current exercise from db.
 	useEffect(() => {
-		db.exercises
-			.get(exerciseId)
-			.then((exercise) => setExercise(exercise ?? { id: exerciseId }));
-	}, [exerciseId]);
+		db.exercises2
+			.get([workspaceId, exerciseIdentifier])
+			.then((exercise) =>
+				setExercise(
+					exercise ?? { identifier: exerciseIdentifier, workspaceId },
+				),
+			);
+	}, [workspaceId, exerciseIdentifier]);
 
 	const updateExerciseInDb = useMemo(() => {
 		return debounce(async (updatedExercise: Exercise) => {
-			db.exercises.put(updatedExercise);
+			db.exercises2.put(updatedExercise);
 		}, 500);
 	}, []);
 
@@ -61,7 +65,8 @@ export default function ExerciseEditorPage({
 		[updateExerciseInDb],
 	);
 
-	const exerciseConceptReferences = useConceptReferencesOfExercise(exerciseId);
+	const exerciseConceptReferences =
+		useConceptReferencesOfExercise(exerciseIdentifier);
 
 	return (
 		<>
@@ -74,7 +79,7 @@ export default function ExerciseEditorPage({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href="/exercises"
+						href={`/workspaces/${workspaceId}/exercises`}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -88,7 +93,9 @@ export default function ExerciseEditorPage({
 							onClick={() => {
 								const newExerciseId = crypto.randomUUID();
 
-								router.push(`/exercises/${newExerciseId}/edit`);
+								router.push(
+									`/workspaces/${workspaceId}/exercises/${newExerciseId}/edit`,
+								);
 
 								// If concepts were selected for the current exercise,
 								// preselect them for the new exercise for improved UX.
@@ -97,8 +104,8 @@ export default function ExerciseEditorPage({
 										"rw",
 										[db.experiences, db.exerciseConceptReference],
 										async () => {
-											await db.exercises.put({
-												id: newExerciseId,
+											await db.exercises2.put({
+												identifier: newExerciseId,
 											});
 											await db.exerciseConceptReference.bulkPut(
 												exerciseConceptReferences.map(
@@ -120,16 +127,16 @@ export default function ExerciseEditorPage({
 							onRemove={async () => {
 								await db.transaction(
 									"rw",
-									[db.exercises, db.exerciseConceptReference],
+									[db.exercises2, db.exerciseConceptReference],
 									async () => {
-										await db.exercises.delete(exerciseId);
+										await db.exercises2.delete(exerciseIdentifier);
 										await db.exerciseConceptReference
 											.where("exerciseId")
-											.equals(exerciseId)
+											.equals(exerciseIdentifier)
 											.delete();
 									},
 								);
-								router.push("/exercises");
+								router.push(`/workspaces/${workspaceId}/exercises`);
 							}}
 						/>
 					</Box>
@@ -195,7 +202,7 @@ const SourceEditor = ({
 							(x) => !conceptIds.includes(x),
 						);
 						await db.exerciseConceptReference.put({
-							exerciseId: exercise.id,
+							exerciseId: exercise.identifier,
 							conceptId: addedConceptId,
 						});
 					} else {
@@ -203,7 +210,7 @@ const SourceEditor = ({
 							(x) => !newConceptIds.includes(x),
 						);
 						await db.exerciseConceptReference.delete([
-							exercise.id,
+							exercise.identifier,
 							removedConceptId,
 						]);
 					}

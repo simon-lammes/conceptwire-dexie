@@ -1,7 +1,8 @@
 import type { Node } from "@/models/node";
 
 export type Exercise = {
-	id: string;
+	identifier: string;
+	workspaceId: string;
 	owner?: string;
 	realmId?: string;
 	root?: Node;

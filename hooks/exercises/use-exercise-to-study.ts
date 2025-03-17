@@ -67,7 +67,7 @@ export const useExerciseToStudy = ({
 			)
 				continue;
 
-			exerciseToStudy = await db.exercises.get(
+			exerciseToStudy = await db.exercises2.get(
 				exerciseConceptReference.exerciseId,
 			);
 			exerciseToStudyExperience = experience;

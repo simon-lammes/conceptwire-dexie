@@ -14,10 +14,16 @@ import Link from "next/link";
 import { Masonry } from "@mui/lab";
 import { NodeView } from "@/components/nodes/node-view";
 import { ArrowBack } from "@mui/icons-material";
+import { use } from "react";
 
-export default function ExercisesPage() {
+export default function ExercisesPage({
+	params,
+}: {
+	params: Promise<{ workspaceId: string }>;
+}) {
+	const { workspaceId } = use(params);
 	const router = useRouter();
-	const exercises = useLiveQuery(() => db.exercises.toArray(), []);
+	const exercises = useLiveQuery(() => db.exercises2.toArray(), []);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -29,7 +35,7 @@ export default function ExercisesPage() {
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href="/"
+						href={`/workspaces/${workspaceId}`}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -40,7 +46,9 @@ export default function ExercisesPage() {
 						color="inherit"
 						onClick={() => {
 							const newExerciseId = crypto.randomUUID();
-							router.push(`/exercises/${newExerciseId}/edit`);
+							router.push(
+								`/workspaces/${workspaceId}/exercises/${newExerciseId}/edit`,
+							);
 						}}
 					>
 						Create
@@ -50,7 +58,11 @@ export default function ExercisesPage() {
 			<Box sx={{ padding: 2 }}>
 				<Masonry columns={3} spacing={2}>
 					{exercises?.map((exercise) => (
-						<ExerciseCard key={exercise.id} exercise={exercise} />
+						<ExerciseCard
+							key={exercise.identifier}
+							exercise={exercise}
+							workspaceId={workspaceId}
+						/>
 					)) ?? []}
 				</Masonry>
 			</Box>
@@ -58,10 +70,16 @@ export default function ExercisesPage() {
 	);
 }
 
-const ExerciseCard = ({ exercise }: { exercise: Exercise }) => {
+const ExerciseCard = ({
+	exercise,
+	workspaceId,
+}: { exercise: Exercise; workspaceId: string }) => {
 	return (
 		<Card>
-			<CardActionArea component={Link} href={`/exercises/${exercise.id}/edit`}>
+			<CardActionArea
+				component={Link}
+				href={`/workspaces/${workspaceId}/exercises/${exercise.identifier}/edit`}
+			>
 				<CardContent>
 					{exercise.root ? <NodeView node={exercise.root} /> : "empty exercise"}
 				</CardContent>

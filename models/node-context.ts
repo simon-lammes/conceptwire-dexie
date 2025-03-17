@@ -15,4 +15,5 @@ export interface NodeContext {
 	studyResultType?: StudyResultType;
 	nextExercise?: Exercise;
 	concept?: Concept;
+	workspaceId?: string;
 }

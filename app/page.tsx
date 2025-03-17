@@ -34,16 +34,6 @@ export default function Home() {
 					}}
 				>
 					<Card>
-						<CardActionArea component={Link} href="/concepts">
-							<CardHeader title="Concepts" />
-						</CardActionArea>
-					</Card>
-					<Card>
-						<CardActionArea component={Link} href="/exercises">
-							<CardHeader title="Exercises" />
-						</CardActionArea>
-					</Card>
-					<Card>
 						<CardActionArea component={Link} href="/workspaces">
 							<CardHeader title="Workspaces" />
 						</CardActionArea>

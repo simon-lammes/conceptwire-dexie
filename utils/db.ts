@@ -9,7 +9,8 @@ import type { Workspace } from "@/models/workspace";
 export const db = new Dexie("conceptwire", {
 	addons: [dexieCloud],
 }) as Dexie & {
-	exercises: EntityTable<Exercise, "id">;
+	// biome-ignore lint/suspicious/noExplicitAny: I haven't found out whether and how compound primary keys can be declared here in TypeScript.
+	exercises2: EntityTable<Exercise, any>;
 	// biome-ignore lint/suspicious/noExplicitAny: I haven't found out whether and how compound primary keys can be declared here in TypeScript.
 	concepts3: EntityTable<Concept, any>;
 	// biome-ignore lint/suspicious/noExplicitAny: I haven't found out whether and how compound primary keys can be declared here in TypeScript.
@@ -27,7 +28,7 @@ db.version(1).stores({
 	members: "@id",
 	roles: "[realmId+name]",
 
-	exercises: "id, *conceptIds",
+	exercises2: "[workspaceId+identifier], *conceptIds",
 	concepts3: "[workspaceId+identifier]",
 	experiences: "[userId+exerciseId]",
 	exerciseConceptReference: "[exerciseId+conceptId],conceptId",

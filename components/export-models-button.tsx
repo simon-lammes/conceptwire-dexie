@@ -89,9 +89,9 @@ export const ExportModelsButton = () => {
 								"exercises",
 								{ create: true },
 							);
-							await db.exercises.each(async (exercise) => {
+							await db.exercises2.each(async (exercise) => {
 								const exerciseFile = await exercisesDirectory.getFileHandle(
-									`${exercise.id}.json`,
+									`${exercise.identifier}.json`,
 									{ create: true },
 								);
 								const writable = await exerciseFile.createWritable();

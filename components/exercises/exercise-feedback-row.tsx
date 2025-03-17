@@ -30,7 +30,7 @@ export const ExerciseFeedbackRow = ({ context }: { context: NodeContext }) => {
 						variant="contained"
 						endIcon={<ArrowForward />}
 						component={Link}
-						href={`/concepts/${context.concept.identifier}/study/${context.nextExercise.id}`}
+						href={`/workspaces/${context.workspaceId}/concepts/${context.concept.identifier}/study/${context.nextExercise.identifier}`}
 					>
 						Next exercise
 					</Button>

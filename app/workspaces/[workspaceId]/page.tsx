@@ -6,7 +6,16 @@ import IconButton from "@mui/material/IconButton";
 import Link from "next/link";
 import { ArrowBack, MoreVert } from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
-import { Box, ListItemButton, ListItemText, Popover } from "@mui/material";
+import {
+	Box,
+	Card,
+	CardActionArea,
+	CardHeader,
+	Container,
+	ListItemButton,
+	ListItemText,
+	Popover,
+} from "@mui/material";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/utils/db";
 import type React from "react";
@@ -33,7 +42,7 @@ export default function WorkspaceDetailPage({
 						aria-label="back"
 						sx={{ mr: 2 }}
 						component={Link}
-						href="/"
+						href={"/workspaces"}
 					>
 						<ArrowBack />
 					</IconButton>
@@ -57,7 +66,35 @@ export default function WorkspaceDetailPage({
 					/>
 				</Toolbar>
 			</AppBar>
-			<Box sx={{ padding: 2 }}>hello</Box>
+			<Container>
+				<Typography variant="h2" component="h2" mt={4} mb={1}>
+					Editing
+				</Typography>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: "repeat(2, minmax(0,1fr))",
+						gap: 2,
+					}}
+				>
+					<Card>
+						<CardActionArea
+							component={Link}
+							href={`/workspaces/${workspaceId}/concepts`}
+						>
+							<CardHeader title="Concepts" />
+						</CardActionArea>
+					</Card>
+					<Card>
+						<CardActionArea
+							component={Link}
+							href={`/workspaces/${workspaceId}/exercises`}
+						>
+							<CardHeader title="Exercises" />
+						</CardActionArea>
+					</Card>
+				</Box>
+			</Container>
 		</>
 	);
 }
