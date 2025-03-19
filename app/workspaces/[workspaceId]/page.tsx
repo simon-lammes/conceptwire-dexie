@@ -260,9 +260,11 @@ function InviteMemberButton({ realmId }: { realmId: string }) {
 							padding: 2,
 							display: "flex",
 							flexDirection: "column",
-							gap: 2,
+							gap: 3,
 						}}
 					>
+						<Typography variant="h6">Invite user to workspace</Typography>
+
 						<TextField label="Name" {...register("name")} />
 
 						<TextField label="E-mail" {...register("email")} />
