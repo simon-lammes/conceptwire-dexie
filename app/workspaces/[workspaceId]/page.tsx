@@ -23,6 +23,8 @@ import {
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
+	Menu,
+	MenuItem,
 	Paper,
 	Popover,
 	TextField,
@@ -32,8 +34,13 @@ import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { formatRelative } from "date-fns";
-import { getTiedRealmId } from "dexie-cloud-addon";
+import { type DBRealmMember, getTiedRealmId } from "dexie-cloud-addon";
 import { useLiveQuery } from "dexie-react-hooks";
+import {
+	bindMenu,
+	bindTrigger,
+	usePopupState,
+} from "material-ui-popup-state/hooks";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -182,27 +189,54 @@ function MemberList({ realmId }: { realmId: string }) {
 		<Paper>
 			<List>
 				{members?.map((member) => (
-					<ListItem key={member.id} disablePadding>
-						<ListItemButton>
-							<ListItemIcon>
-								{member.accepted ? <Check /> : <Email />}
-							</ListItemIcon>
-							<ListItemText
-								primary={member.name ?? member.email ?? member.id}
-								secondary={
-									member.accepted
-										? `since ${formatRelative(member.accepted, new Date())}`
-										: member.invitedDate
-											? `invited ${formatRelative(member.invitedDate, new Date())}`
-											: undefined
-								}
-							/>
-							<Chip label={member.permissions?.manage ? "Admin" : "Viewer"} />
-						</ListItemButton>
-					</ListItem>
+					<MemberListItem key={member.id} member={member} />
 				))}
 			</List>
 		</Paper>
+	);
+}
+
+function MemberListItem({ member }: { member: DBRealmMember }) {
+	const popupState = usePopupState({ variant: "popover", popupId: "demoMenu" });
+	return (
+		<>
+			<ListItem disablePadding>
+				<ListItemButton sx={{ gap: 1 }}>
+					<ListItemIcon>{member.accepted ? <Check /> : <Email />}</ListItemIcon>
+					<ListItemText
+						primary={member.name ?? member.email ?? member.id}
+						secondary={
+							member.accepted
+								? `since ${formatRelative(member.accepted, new Date())}`
+								: member.invitedDate
+									? `invited ${formatRelative(member.invitedDate, new Date())}`
+									: undefined
+						}
+					/>
+					<Chip label={member.permissions?.manage ? "Admin" : "Viewer"} />
+					<IconButton {...bindTrigger(popupState)}>
+						<MoreVert />
+					</IconButton>
+				</ListItemButton>
+			</ListItem>
+			<Menu
+				{...bindMenu(popupState)}
+				anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+				transformOrigin={{ vertical: "top", horizontal: "left" }}
+			>
+				<MenuItem
+					onClick={async () => {
+						popupState.close();
+						console.log(member);
+						await db.members
+							.where({ email: member.email, realmId: member.realmId })
+							.delete();
+					}}
+				>
+					Remove
+				</MenuItem>
+			</Menu>
+		</>
 	);
 }
 
