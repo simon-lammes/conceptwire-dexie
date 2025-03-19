@@ -1,9 +1,7 @@
 "use client";
 
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Link from "next/link";
+import { RoleSelect } from "@/components/workspaces/role-select";
+import { db } from "@/utils/db";
 import {
 	Add,
 	ArrowBack,
@@ -12,7 +10,6 @@ import {
 	MoreVert,
 	Send,
 } from "@mui/icons-material";
-import Typography from "@mui/material/Typography";
 import {
 	Box,
 	Button,
@@ -21,27 +18,27 @@ import {
 	CardHeader,
 	Chip,
 	Container,
-	FormControl,
-	InputLabel,
 	List,
 	ListItem,
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
-	MenuItem,
 	Paper,
 	Popover,
-	Select,
 	TextField,
 } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import IconButton from "@mui/material/IconButton";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { formatRelative } from "date-fns";
+import { getTiedRealmId } from "dexie-cloud-addon";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/utils/db";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type React from "react";
 import type { MouseEvent } from "react";
 import { use, useId, useState } from "react";
-import { getTiedRealmId } from "dexie-cloud-addon";
-import { useRouter } from "next/navigation";
-import { formatRelative } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 
 export default function WorkspaceDetailPage({
@@ -273,13 +270,7 @@ function InviteMemberButton({ realmId }: { realmId: string }) {
 						<Controller
 							control={control}
 							render={({ field: { value, onChange } }) => (
-								<FormControl fullWidth>
-									<InputLabel>Role</InputLabel>
-									<Select label="Role" value={value} onChange={onChange}>
-										<MenuItem value="viewer">Viewer</MenuItem>
-										<MenuItem value="admin">Admin</MenuItem>
-									</Select>
-								</FormControl>
+								<RoleSelect roleName={value} onRoleNameChange={onChange} />
 							)}
 							name="role"
 						/>

@@ -1,0 +1,25 @@
+{
+	"roles": {
+		"manager": null,
+		"admin": {
+			"displayName": "Admin",
+			"description": "Members with this role gains full permissions within the workspace.",
+			"sortOrder": 1,
+			"permissions": { "manage": "*" }
+		},
+		"editor": {
+			"displayName": "Editor",
+			"description": "This user can edit the content inside the workspace",
+			"sortOrder": 2,
+			"permissions": {
+				"manage": ["concepts", "exercises", "exerciseConceptReferences"]
+			}
+		},
+		"viewer": {
+			"displayName": "Viewer",
+			"description": "Members with this role have no permissions to change any data",
+			"sortOrder": 3,
+			"permissions": {}
+		}
+	}
+}
