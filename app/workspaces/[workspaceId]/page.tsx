@@ -79,12 +79,21 @@ export default function WorkspaceDetailPage({
 						onRemove={async () => {
 							await db.transaction(
 								"rw",
-								[db.realms, db.workspaces, db.concepts3],
+								[
+									db.realms,
+									db.members,
+									db.workspaces,
+									db.concepts3,
+									db.exercises2,
+								],
 								async () => {
 									const realmId = getTiedRealmId(workspaceId);
-									await db.realms.delete(realmId);
+									await db.members.where({ realmId }).delete();
 									await db.workspaces.delete(workspaceId);
-									await db.concepts3.where({ realmId }).delete();
+									await db.concepts3.where({ workspaceId }).delete();
+									await db.exercises2.where({ workspaceId }).delete();
+									// Deleting the realm needs to happen after all of it's content has been deleted.
+									await db.realms.delete(realmId);
 								},
 							);
 							router.push("/workspaces");
@@ -283,9 +292,7 @@ function InviteMemberButton({ realmId }: { realmId: string }) {
 							email,
 							name,
 							invite: true,
-							permissions: {
-								manage: role === "admin" ? "*" : undefined,
-							},
+							roles: [role],
 						});
 					})}
 				>

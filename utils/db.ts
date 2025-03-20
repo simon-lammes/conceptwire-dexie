@@ -1,10 +1,10 @@
+import type { Concept } from "@/models/concept";
 import type { Exercise } from "@/models/exercise";
+import type { ExerciseConceptReference } from "@/models/exercise-concept-reference";
+import type { Experience } from "@/models/experience";
+import type { Workspace } from "@/models/workspace";
 import Dexie, { type EntityTable } from "dexie";
 import dexieCloud from "dexie-cloud-addon";
-import type { Concept } from "@/models/concept";
-import type { Experience } from "@/models/experience";
-import type { ExerciseConceptReference } from "@/models/exercise-concept-reference";
-import type { Workspace } from "@/models/workspace";
 
 export const db = new Dexie("conceptwire", {
 	addons: [dexieCloud],
