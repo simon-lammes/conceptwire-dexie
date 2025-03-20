@@ -213,7 +213,7 @@ function MemberListItem({ member }: { member: DBRealmMember }) {
 				<ListItemButton sx={{ gap: 1 }}>
 					<ListItemIcon>{member.accepted ? <Check /> : <Email />}</ListItemIcon>
 					<ListItemText
-						primary={member.name ?? member.email ?? member.id}
+						primary={member.email ?? member.userId ?? member.name}
 						secondary={
 							member.accepted
 								? `since ${formatRelative(member.accepted, new Date())}`

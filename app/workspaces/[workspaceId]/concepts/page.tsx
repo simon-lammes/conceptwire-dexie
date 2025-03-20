@@ -1,6 +1,10 @@
 "use client";
 
+import { NodeView } from "@/components/nodes/node-view";
+import type { Concept } from "@/models/concept";
 import { db } from "@/utils/db";
+import { Add, ArrowBack, Check } from "@mui/icons-material";
+import { Masonry } from "@mui/lab";
 import {
 	Box,
 	Card,
@@ -15,16 +19,11 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { getTiedRealmId } from "dexie-cloud-addon";
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
-import { Masonry } from "@mui/lab";
-import type { Concept } from "@/models/concept";
-import { NodeView } from "@/components/nodes/node-view";
-import { Add, ArrowBack, Check } from "@mui/icons-material";
 import { type MouseEvent, use, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { WorkspaceSelect } from "@/components/workspaces/workspace-select";
-import { getTiedRealmId } from "dexie-cloud-addon";
+import { useForm } from "react-hook-form";
 
 export default function ConceptsPage({
 	params,
@@ -32,7 +31,10 @@ export default function ConceptsPage({
 	params: Promise<{ workspaceId: string }>;
 }) {
 	const { workspaceId } = use(params);
-	const concepts = useLiveQuery(() => db.concepts3.toArray(), []);
+	const concepts = useLiveQuery(
+		() => db.concepts3.where({ workspaceId }).toArray(),
+		[],
+	);
 	return (
 		<>
 			<AppBar position="sticky">
@@ -51,7 +53,7 @@ export default function ConceptsPage({
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 						Concepts
 					</Typography>
-					<CreateConceptButton />
+					<CreateConceptButton workspaceId={workspaceId} />
 				</Toolbar>
 			</AppBar>
 			<Box sx={{ padding: 2 }}>
@@ -91,11 +93,10 @@ const ConceptCard = ({
 };
 
 type CreateConceptInput = {
-	workspaceId: string;
 	title: string;
 };
 
-const CreateConceptButton = () => {
+const CreateConceptButton = ({ workspaceId }: { workspaceId: string }) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
 	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -111,7 +112,6 @@ const CreateConceptButton = () => {
 	const { register, handleSubmit, control } = useForm<CreateConceptInput>({
 		defaultValues: {
 			// Passing an empty string as a value to an input, will tell it to be a controller input - which is what we want.
-			workspaceId: "",
 			title: "",
 		},
 	});
@@ -131,7 +131,7 @@ const CreateConceptButton = () => {
 				}}
 			>
 				<form
-					onSubmit={handleSubmit(async ({ workspaceId, title }) => {
+					onSubmit={handleSubmit(async ({ title }) => {
 						const realmId = getTiedRealmId(workspaceId);
 						const identifier = crypto.randomUUID();
 						await db.concepts3.put({ identifier, realmId, workspaceId, title });
@@ -140,16 +140,6 @@ const CreateConceptButton = () => {
 				>
 					<Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 						<Typography variant="h6">New concept</Typography>
-						<Controller
-							control={control}
-							name="workspaceId"
-							render={({ field }) => (
-								<WorkspaceSelect
-									value={field.value}
-									onChange={(event) => field.onChange(event.target.value)}
-								/>
-							)}
-						/>
 
 						<TextField
 							autoFocus

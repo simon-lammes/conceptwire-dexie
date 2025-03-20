@@ -4,6 +4,6 @@ export type Exercise = {
 	identifier: string;
 	workspaceId: string;
 	owner?: string;
-	realmId?: string;
+	realmId?: string | null;
 	root?: Node;
 };

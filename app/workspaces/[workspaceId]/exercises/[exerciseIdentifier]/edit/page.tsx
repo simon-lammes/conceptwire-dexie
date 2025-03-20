@@ -4,7 +4,9 @@ import { ConceptsSelect } from "@/components/concepts/concepts-select";
 import { NodeEditor } from "@/components/nodes/node-editor";
 import { NodeSelection } from "@/components/nodes/node-selection";
 import { NodeView } from "@/components/nodes/node-view";
+import { useConceptReferencesOfExercise } from "@/hooks/exercise-concept-references/use-concept-references-of-exercise";
 import type { Exercise } from "@/models/exercise";
+import type { ExerciseConceptReference } from "@/models/exercise-concept-reference";
 import { exerciseNodeTypes } from "@/models/node";
 import { db } from "@/utils/db";
 import { ArrowBack, MoreVert } from "@mui/icons-material";
@@ -23,12 +25,11 @@ import Grid from "@mui/material/Grid2";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { getTiedObjectId } from "dexie-cloud-addon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { use, useCallback, useEffect, useId, useMemo, useState } from "react";
-import type { ExerciseConceptReference } from "@/models/exercise-concept-reference";
-import { useConceptReferencesOfExercise } from "@/hooks/exercise-concept-references/use-concept-references-of-exercise";
 
 export default function ExerciseEditorPage({
 	params,
@@ -42,13 +43,15 @@ export default function ExerciseEditorPage({
 
 	// Load current exercise from db.
 	useEffect(() => {
-		db.exercises2
-			.get([workspaceId, exerciseIdentifier])
-			.then((exercise) =>
-				setExercise(
-					exercise ?? { identifier: exerciseIdentifier, workspaceId },
-				),
-			);
+		db.exercises2.get([workspaceId, exerciseIdentifier]).then((exercise) =>
+			setExercise(
+				exercise ?? {
+					identifier: exerciseIdentifier,
+					workspaceId,
+					realmId: getTiedObjectId(workspaceId),
+				},
+			),
+		);
 	}, [workspaceId, exerciseIdentifier]);
 
 	const updateExerciseInDb = useMemo(() => {
@@ -129,10 +132,11 @@ export default function ExerciseEditorPage({
 									"rw",
 									[db.exercises2, db.exerciseConceptReference],
 									async () => {
-										await db.exercises2.delete(exerciseIdentifier);
+										await db.exercises2
+											.where({ identifier: exerciseIdentifier, workspaceId })
+											.delete();
 										await db.exerciseConceptReference
-											.where("exerciseId")
-											.equals(exerciseIdentifier)
+											.where({ exerciseId: exerciseIdentifier, workspaceId })
 											.delete();
 									},
 								);
