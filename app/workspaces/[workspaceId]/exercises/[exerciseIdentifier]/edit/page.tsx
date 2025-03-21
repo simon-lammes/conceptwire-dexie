@@ -5,6 +5,7 @@ import { NodeEditor } from "@/components/nodes/node-editor";
 import { NodeSelection } from "@/components/nodes/node-selection";
 import { NodeView } from "@/components/nodes/node-view";
 import { useConceptReferencesOfExercise } from "@/hooks/exercise-concept-references/use-concept-references-of-exercise";
+import { useWorkspaceRealmId } from "@/hooks/workspaces/use-workspace-realm-id";
 import type { Exercise } from "@/models/exercise";
 import type { ExerciseConceptReference } from "@/models/exercise-concept-reference";
 import { exerciseNodeTypes } from "@/models/node";
@@ -37,6 +38,9 @@ export default function ExerciseEditorPage({
 	params: Promise<{ workspaceId: string; exerciseIdentifier: string }>;
 }) {
 	const { exerciseIdentifier, workspaceId } = use(params);
+
+	const realmId = useWorkspaceRealmId(workspaceId);
+
 	const router = useRouter();
 
 	const [exercise, setExercise] = useState<Exercise | undefined>(undefined);
@@ -107,15 +111,20 @@ export default function ExerciseEditorPage({
 										"rw",
 										[db.experiences, db.exerciseConceptReference],
 										async () => {
+											if (!realmId) throw new Error("Missing realmId");
 											await db.exercises2.put({
 												identifier: newExerciseId,
-											});
+												workspaceId,
+												realmId,
+											} satisfies Exercise);
 											await db.exerciseConceptReference.bulkPut(
 												exerciseConceptReferences.map(
 													(existingReference) =>
 														({
 															exerciseId: newExerciseId,
 															conceptId: existingReference.conceptId,
+															workspaceId,
+															realmId,
 														}) satisfies ExerciseConceptReference,
 												),
 											);
