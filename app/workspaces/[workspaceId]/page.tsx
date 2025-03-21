@@ -236,10 +236,7 @@ function MemberListItem({ member }: { member: DBRealmMember }) {
 				<MenuItem
 					onClick={async () => {
 						popupState.close();
-						console.log(member);
-						await db.members
-							.where({ email: member.email, realmId: member.realmId })
-							.delete();
+						await db.members.where({ id: member.id }).delete();
 					}}
 				>
 					Remove
